@@ -14,13 +14,18 @@ class App extends Component {
     super(props);
 
     this.updateForm = this.updateForm.bind(this);
+    this.updateProgress = this.updateProgress.bind(this);
 
     this.state = {
       step: 0,
+      progress: 0,
       form: {
         test: "54"
       }
     };
+  }
+  updateProgress(total) {
+    this.setState({ progress: total });
   }
 
   updateForm(field, value) {
@@ -64,6 +69,8 @@ class App extends Component {
             step={this.state.step}
             form={this.state.form}
             updateForm={this.updateForm}
+            updateProgress={this.updateProgress}
+            progress={this.state.progress}
           />
         </div>
       </div>

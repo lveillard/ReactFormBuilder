@@ -12,7 +12,11 @@ import {
   Tile,
   Box,
   Title,
-  Select
+  Select,
+  Progress,
+  Button,
+  Icon,
+  Help
 } from "bloomer";
 import steps from "./data";
 
@@ -37,6 +41,7 @@ class Steps extends Component {
               <Label>{name}</Label>
               <Control>
                 <Input
+                  isColor=""
                   key={code}
                   value={this.props.form[code]}
                   type="text"
@@ -46,6 +51,9 @@ class Steps extends Component {
                   }
                 />
               </Control>
+              {false && (
+                <Help isColor="success">This username is available</Help>
+              )}
             </Field>
           );
         case "T":
@@ -55,7 +63,13 @@ class Steps extends Component {
             <Field>
               <Label>Select:</Label>
               <Control>
-                <Select isFullWidth>
+                <Select
+                  key={code}
+                  isFullWidth
+                  onChange={event =>
+                    this.props.updateForm(code, event.target.value)
+                  }
+                >
                   <option>Option 1</option>
                   <option>Option 2</option>
                 </Select>
@@ -100,8 +114,37 @@ class Steps extends Component {
     return (
       <div className="Steps">
         <Columns isCentered>
-          <Column isSize={8}>
-            <Section>
+          <Column isSize={2} />
+          <Column>
+            <Section style={{ paddingTop: "24px" }}>
+              <Columns isMobile>
+                <Column>
+                  <Progress
+                    isColor="warning"
+                    isSize="small"
+                    value={Object.keys(this.props.form).length}
+                    max={100}
+                  />
+                </Column>
+                <Column isSize={3} style={{ padding: "0px 12px 0px 0px" }}>
+                  {false ? (
+                    <Button isPulled="right" disabled isColor="warning">
+                      <Icon className="fa fa-check" />
+                      <p>Enviar</p>
+                    </Button>
+                  ) : (
+                    <Button
+                      isPulled="right"
+                      isColor="warning"
+                      onClick={() => alert("done")}
+                    >
+                      <Icon className="fa fa-check" />
+                      <p>Enviar</p>
+                    </Button>
+                  )}
+                </Column>
+              </Columns>
+
               <Tile isAncestor>
                 <Tile isVertical isParent>
                   {steps.Steps[this.props.step].content
@@ -111,6 +154,7 @@ class Steps extends Component {
               </Tile>
             </Section>
           </Column>
+          <Column isSize={2} />
         </Columns>
       </div>
     );
