@@ -18,8 +18,7 @@ class App extends Component {
     this.state = {
       step: 0,
       form: {
-        NIF: "54",
-        Fiscal: "test"
+        test: "54"
       }
     };
   }

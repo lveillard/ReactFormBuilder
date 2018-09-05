@@ -6,9 +6,9 @@ var steps = {
       content: [
         {
           box: [
-            "TT001:Identificación de la empresa",
-            "IS002:NIF (CIF)",
-            "IT003:Nombre fiscal"
+            "TT:Identificación de la empresa",
+            "IS-nif:NIF (CIF)",
+            "IT-nombreFiscal:Nombre fiscal"
           ]
         },
         {
@@ -20,7 +20,26 @@ var steps = {
         }
       ]
     },
-    { ID: "1", name: "Centro de trabajo", content: ["title"] }
+    {
+      ID: "1",
+      name: "Centro de trabajo",
+      content: [
+        {
+          box: [
+            "TT:Identificación de la empresa",
+            "IS-nif:NIF (CIF)",
+            "IT-nombreFiscal:Nombre fiscal"
+          ]
+        },
+        {
+          box: [
+            "TT:Representante Legal",
+            { H: ["IS:Nombre", "IS:Apellidos"] },
+            "WR"
+          ]
+        }
+      ]
+    }
   ]
 };
 export default steps;

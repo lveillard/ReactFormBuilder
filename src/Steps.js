@@ -17,38 +17,41 @@ import steps from "./data";
 
 class Steps extends Component {
   renderComponent(component) {
-    var type = component.charAt(0);
-    var mode = component.charAt(1);
-    var nameOrigin = component.indexOf(":");
-    var code = component.slice(0, nameOrigin);
-    var name = component.slice(nameOrigin + 1);
+    if (typeof component == "object") {
+      return "holi";
+    }
+    if (typeof component == "string") {
+      var type = component.charAt(0);
+      var mode = component.charAt(1);
+      var nameOrigin = component.indexOf(":");
+      var codeOrigin = component.indexOf("-");
+      var code = component.slice(codeOrigin + 1, nameOrigin);
+      var name = component.slice(nameOrigin + 1);
 
-    console.log(code);
-    switch (type) {
-      case "I":
-        return (
-          <Field>
-            <Label>{name}</Label>
-            <Control>
-              <Input
-                value={this.props.form[code]}
-                type="text"
-                placeholder="Text Input"
-                onChange={event =>
-                  this.props.updateForm(code, event.target.value)
-                }
-              />
-            </Control>
-          </Field>
-        );
-      case "T":
-        return <Title>{name}</Title>;
-      default:
-        return null;
+      switch (type) {
+        case "I":
+          return (
+            <Field>
+              <Label>{name}</Label>
+              <Control>
+                <Input
+                  value={this.props.form[code]}
+                  type="text"
+                  placeholder=""
+                  onChange={event =>
+                    this.props.updateForm(code, event.target.value)
+                  }
+                />
+              </Control>
+            </Field>
+          );
+        case "T":
+          return <Title>{name}</Title>;
+        default:
+          return null;
+      }
     }
   }
-
-  renderStep() {}
 
   renderBox(boxContent) {
     return (
@@ -57,7 +60,17 @@ class Steps extends Component {
         render={props => (
           <Box {...props}>
             {console.log(boxContent)}
-            {boxContent.map(x => this.renderComponent(x))}
+            {boxContent.map(
+              x =>
+                typeof x == "string" ? (
+                  this.renderComponent(x)
+                ) : (
+                  <Columns>
+                    {" "}
+                    {x.H.map(y => <Column>{this.renderComponent(y)}</Column>)}
+                  </Columns>
+                )
+            )}
           </Box>
         )}
       />
@@ -70,117 +83,16 @@ class Steps extends Component {
     }
     const a1 = steps.Steps[this.props.step].content.map(x => x.box);
     console.log(a1);
-    console.log(a1[0][0].charAt(0));
-
-    const contenido = steps.Steps[this.props.step].content.map(x => (
-      <Tile isAncestor>{x}</Tile>
-    ));
 
     return (
       <div className="Steps">
-        {/*Step 1*/}
-        {this.props.step == 0 ? (
-          <Section>
-            <Tile isAncestor>
-              <Tile isVertical isParent>
-                {this.renderBox(a1[0])}
-                <Tile
-                  isChild
-                  render={props => (
-                    <Box {...props}>
-                      <Title>Identificación de la empresa</Title>
-                    </Box>
-                  )}
-                />
-                <Tile
-                  isChild
-                  render={props => (
-                    <Box {...props}>
-                      <Title>Identificación de la empresa</Title>
-                      <Field>
-                        <Label>NIF (CIF)</Label>
-                        <Control>
-                          <Input
-                            value={this.props.form["NIF"]}
-                            type="text"
-                            placeholder="Text Input"
-                            onChange={event =>
-                              this.props.updateForm("NIF", event.target.value)
-                            }
-                          />
-                        </Control>
-                      </Field>
-                      <Field>
-                        <Label>Nombre fiscal</Label>
-                        <Control>
-                          <Input
-                            value={this.props.form["Fiscal"]}
-                            type="text"
-                            placeholder="Text Input"
-                            onChange={event =>
-                              this.props.updateForm(
-                                "Fiscal",
-                                event.target.value
-                              )
-                            }
-                          />
-                        </Control>
-                      </Field>
-                    </Box>
-                  )}
-                />
-                <Tile
-                  isChild
-                  render={props => (
-                    <Box {...props}>
-                      <Title>Representante Legal</Title>
-                      <Columns isMobile>
-                        <Column>
-                          <Field>
-                            <Label>Nombre</Label>
-                            <Control>
-                              <Input
-                                value={this.props.form["Fiscal"]}
-                                type="text"
-                                placeholder="Text Input"
-                                onChange={event =>
-                                  this.props.updateForm(
-                                    "Fiscal",
-                                    event.target.value
-                                  )
-                                }
-                              />
-                            </Control>
-                          </Field>
-                        </Column>
-                        <Column>
-                          <Field>
-                            <Label>Apellidos</Label>
-                            <Control>
-                              <Input
-                                value={this.props.form["Fiscal"]}
-                                type="text"
-                                placeholder="Text Input"
-                                onChange={event =>
-                                  this.props.updateForm(
-                                    "Fiscal",
-                                    event.target.value
-                                  )
-                                }
-                              />
-                            </Control>
-                          </Field>
-                        </Column>
-                      </Columns>
-                    </Box>
-                  )}
-                />
-              </Tile>
+        <Section>
+          <Tile isAncestor>
+            <Tile isVertical isParent>
+              {a1.map(x => this.renderBox(x))}
             </Tile>
-          </Section>
-        ) : (
-          undefined
-        )}
+          </Tile>
+        </Section>
       </div>
     );
   }
