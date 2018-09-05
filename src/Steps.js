@@ -20,9 +20,10 @@ class Steps extends Component {
     var type = component.charAt(0);
     var mode = component.charAt(1);
     var nameOrigin = component.indexOf(":");
+    var code = component.slice(0, nameOrigin);
     var name = component.slice(nameOrigin + 1);
 
-    console.log(name);
+    console.log(code);
     switch (type) {
       case "I":
         return (
@@ -30,11 +31,11 @@ class Steps extends Component {
             <Label>{name}</Label>
             <Control>
               <Input
-                value={this.props.form["NIF"]}
+                value={this.props.form[code]}
                 type="text"
                 placeholder="Text Input"
                 onChange={event =>
-                  this.props.updateForm("NIF", event.target.value)
+                  this.props.updateForm(code, event.target.value)
                 }
               />
             </Control>
