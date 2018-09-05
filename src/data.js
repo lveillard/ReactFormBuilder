@@ -6,9 +6,9 @@ var steps = {
       content: [
         {
           box: [
-            "TT:Identificación de la empresa",
-            "IS:NIF (CIF)",
-            "IT:nombre_fiscal"
+            "TT-001:Identificación de la empresa",
+            "IS-002:NIF (CIF)",
+            "IT-003:Nombre fiscal"
           ]
         },
         {
