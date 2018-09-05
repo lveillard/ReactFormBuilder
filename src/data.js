@@ -3,6 +3,7 @@ var steps = {
     {
       ID: "0",
       name: "Información general",
+      icon: "fa fa-globe",
       content: [
         {
           box: [
@@ -14,8 +15,7 @@ var steps = {
         {
           box: [
             "TT:Representante Legal",
-            { H: ["IS:Nombre", "IS:Apellidos"] },
-            "WR"
+            { H: ["IS-nombreRL:Nombre", "IS-ApellidosRL:Apellidos"] }
           ]
         }
       ]
@@ -23,19 +23,14 @@ var steps = {
     {
       ID: "1",
       name: "Centro de trabajo",
+      icon: "fa fa-building",
       content: [
         {
           box: [
-            "TT:Identificación de la empresa",
-            "IS-nif:NIF (CIF)",
-            "IT-nombreFiscal:Nombre fiscal"
-          ]
-        },
-        {
-          box: [
-            "TT:Representante Legal",
-            { H: ["IS:Nombre", "IS:Apellidos"] },
-            "WR"
+            "TT:Centro de trabajo",
+            "IT-nombreCentro:Nombre del centro de trabajo",
+            "IN-CCC:C.C.C. Principal",
+            "ST-CoCo:Convenio colectivo"
           ]
         }
       ]

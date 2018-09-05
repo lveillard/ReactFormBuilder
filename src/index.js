@@ -11,12 +11,10 @@ document.body.style.backgroundColor = "#f6f7f9";
 document.body.style.height = "100vh";
 
 ReactDOM.render(
-  <BrowserRouter>
-    <Section className="main">
-      <Container>
-        <App />
-      </Container>
-    </Section>
-  </BrowserRouter>,
+  <Section className="main">
+    <Container>
+      <App />
+    </Container>
+  </Section>,
   document.getElementById("root")
 );

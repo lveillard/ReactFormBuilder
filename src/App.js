@@ -37,7 +37,7 @@ class App extends Component {
       >
         <TabLink>
           <Icon isSize="small">
-            <span className="fa fa-image" aria-hidden="true" />
+            <span className={x[1].icon} aria-hidden="true" />
           </Icon>
           <span>{x[1].name}</span>
         </TabLink>
