@@ -8,6 +8,7 @@
     "bloomer": "0.6.3",
     "bulma": "0.7.1",
     "bulma-steps": "2.2.1",
+    "firebase": "5.4.2",
     "rc-steps": "3.3.0",
     "react": "16.4.2",
     "react-dom": "16.4.2",

@@ -1,4 +1,4 @@
-var steps = {
+export const steps = {
   Steps: [
     {
       ID: "0",
@@ -8,7 +8,6 @@ var steps = {
         {
           box: [
             "TT:Identificación de la empresa",
-            "IS-nif:NIF (CIF)",
             "IT-nombreFiscal:Nombre fiscal"
           ]
         },
@@ -29,12 +28,16 @@ var steps = {
           box: [
             "TT:Centro de trabajo",
             "IT-nombreCentro:Nombre del centro de trabajo",
-            "IN-CCC:C.C.C. Principal",
-            "ST-CoCo:Convenio colectivo"
+            "SN-becarios:El centro tiene becarios?:becarios",
+            "ST-CoCo:Convenio colectivo:Y/N"
           ]
         }
       ]
     }
   ]
 };
-export default steps;
+
+export const ops = {
+  becarios: ["Centro con becarios", "Centro sin becarios"],
+  "Y/N": ["Sí", "No"]
+};

@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "bulma/css/bulma.css";
 import "bulma-steps";
+
 import App from "./App";
 import { Container, Section } from "bloomer";
 import "./style.css";

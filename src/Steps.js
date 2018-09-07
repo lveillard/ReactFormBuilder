@@ -18,7 +18,7 @@ import {
   Icon,
   Help
 } from "bloomer";
-import steps from "./data";
+import { steps, ops } from "./data";
 
 class Steps extends Component {
   renderComponent(component) {
@@ -31,7 +31,10 @@ class Steps extends Component {
       var nameOrigin = component.indexOf(":");
       var codeOrigin = component.indexOf("-");
       var code = component.slice(0, nameOrigin);
-      var name = component.slice(nameOrigin + 1);
+      var name = component.slice(
+        nameOrigin + 1,
+        type == "S" ? component.lastIndexOf(":") : undefined
+      );
       console.log("code: " + code);
 
       switch (type) {
@@ -59,19 +62,21 @@ class Steps extends Component {
         case "T":
           return <Title isSize={3}>{name}</Title>;
         case "S":
+          var options = component.slice(component.lastIndexOf(":") + 1);
           return (
             <Field>
-              <Label>Select:</Label>
+              <Label>{name}</Label>
               <Control>
                 <Select
                   key={code}
+                  value={this.props.form[code]}
                   isFullWidth
                   onChange={event =>
                     this.props.updateForm(code, event.target.value)
                   }
                 >
-                  <option>Option 1</option>
-                  <option>Option 2</option>
+                  <option style={{ display: "none" }} />
+                  {ops[options].map(x => <option>{x}</option>)}
                 </Select>
               </Control>
             </Field>
@@ -128,7 +133,7 @@ class Steps extends Component {
                 </Column>
                 <Column isSize={3} style={{ padding: "0px 12px 0px 0px" }}>
                   {false ? (
-                    <Button isPulled="right" disabled isColor="warning">
+                    <Button isPulled="right" disabled isColor="warning" onClick>
                       <Icon className="fa fa-check" />
                       <p>Enviar</p>
                     </Button>
@@ -136,7 +141,7 @@ class Steps extends Component {
                     <Button
                       isPulled="right"
                       isColor="warning"
-                      onClick={() => alert("done")}
+                      onClick={() => this.props.send()}
                     >
                       <Icon className="fa fa-check" />
                       <p>Enviar</p>

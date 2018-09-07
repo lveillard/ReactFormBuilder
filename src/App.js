@@ -4,7 +4,9 @@ import { Container, Box, Tabs, Tab, TabList, TabLink, Icon } from "bloomer";
 
 import "rc-steps/assets/index.css";
 import "rc-steps/assets/iconfont.css";
-import steps from "./data";
+import { steps } from "./data";
+
+import { db, auth } from "./firebase";
 //import Steps, { Step } from "rc-steps";
 
 const a = Object.entries(steps.Steps).map(x => <li>{x[1].name}</li>);
@@ -15,6 +17,7 @@ class App extends Component {
 
     this.updateForm = this.updateForm.bind(this);
     this.updateProgress = this.updateProgress.bind(this);
+    this.send = this.send.bind(this);
 
     this.state = {
       step: 0,
@@ -32,6 +35,19 @@ class App extends Component {
     let jasper = Object.assign({}, this.state.form); //creating copy of object
     jasper[field] = value; //updating value
     this.setState({ form: jasper });
+  }
+
+  send() {
+    db.collection("test")
+      .add({
+        info: this.state.form
+      })
+      .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+      })
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
+      });
   }
 
   render() {
@@ -71,6 +87,7 @@ class App extends Component {
             updateForm={this.updateForm}
             updateProgress={this.updateProgress}
             progress={this.state.progress}
+            send={this.send}
           />
         </div>
       </div>
