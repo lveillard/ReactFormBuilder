@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import Printer from "./components/Printer";
+import Uploader from "./components/Uploader";
 import {
   Columns,
   Column,
   Field,
   Label,
   Control,
+  Card,
   Input,
   Container,
   Section,
@@ -47,6 +49,7 @@ class Steps extends Component {
     console.log(this.props.grid);
     let temp = this.props.grid;
     const vacias = Array(numero).fill([
+      { value: null },
       { value: null },
       { value: null },
       { value: null },
@@ -106,11 +109,16 @@ class Steps extends Component {
             </Field>
           );
         case "T":
+          console.log(component);
           return (
             <Title hasTextAlign="centered" isSize={3}>
               {name}
             </Title>
           );
+        case "U":
+          return <Uploader code={code} />;
+        case "N":
+          return <Notification>{name}</Notification>;
         case "M":
           return (
             <div>
@@ -127,6 +135,7 @@ class Steps extends Component {
                         isColor=""
                         value={this.props.empleados}
                         type="number"
+                        min="0"
                         onChange={event =>
                           this.props.updateState(
                             "empleados",
@@ -196,28 +205,33 @@ class Steps extends Component {
     }
   }
 
-  renderBox(boxContent) {
+  renderBox(boxContent, boxTitle = "") {
     return (
-      <Tile
-        key={JSON.stringify(boxContent)}
-        isChild
-        render={props => (
-          <Box {...props}>
-            {boxContent.map(
-              x =>
-                typeof x == "string" ? (
-                  this.renderComponent(x)
-                ) : (
-                  <Columns>
-                    {x.H.map(y => (
-                      <Column key={y}>{this.renderComponent(y)}</Column>
-                    ))}
-                  </Columns>
-                )
-            )}
-          </Box>
-        )}
-      />
+      <Box style={{ padding: "0px" }}>
+        <Printer bold title centered background="#ffdd57" color="#847425">
+          {boxTitle}{" "}
+        </Printer>
+        <Tile
+          key={JSON.stringify(boxContent)}
+          isChild
+          render={props => (
+            <Box {...props}>
+              {boxContent.map(
+                x =>
+                  typeof x == "string" ? (
+                    this.renderComponent(x)
+                  ) : (
+                    <Columns>
+                      {x.H.map(y => (
+                        <Column key={y}>{this.renderComponent(y)}</Column>
+                      ))}
+                    </Columns>
+                  )
+              )}
+            </Box>
+          )}
+        />
+      </Box>
     );
   }
 
@@ -302,7 +316,7 @@ class Steps extends Component {
                     <MessageBody>
                       <ul style={{ listStyleType: "disc" }}>
                         <li>
-                          PayFIt alculará automaticamente las vacaciones
+                          PayFIt calculará automaticamente las vacaciones
                           disponibles, pero es necesario que conozcamos el
                           estado actual
                         </li>{" "}
@@ -386,9 +400,12 @@ class Steps extends Component {
 
               <Tile isAncestor>
                 <Tile isVertical isParent>
-                  {steps.Steps[this.props.step].content
-                    .map(x => x.box)
-                    .map(x => this.renderBox(x))}
+                  {steps.Steps[this.props.step].content.map(
+                    x =>
+                      x.box
+                        ? this.renderBox(x.box)
+                        : this.renderBox(x.titledBox.slice(1), x.titledBox[0])
+                  )}
                 </Tile>
               </Tile>
             </Section>

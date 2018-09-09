@@ -53,6 +53,7 @@ table.data-grid {
   padding-left: 10px;
   padding-right: 10px;
   height: 23px;
+  overflow: hidden;
 }
 
 .data-grid-container .data-grid .cell > input {

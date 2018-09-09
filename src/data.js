@@ -6,14 +6,15 @@ export const steps = {
       icon: "fa fa-globe",
       content: [
         {
-          box: [
-            "TT:Identificación de la empresa",
+          titledBox: [
+            "Identificación de la empresa",
+            "IT-nombreEmpresa:Nombre de la empresa",
             "IT-nombreFiscal:Nombre fiscal"
           ]
         },
         {
-          box: [
-            "TT:Representante Legal",
+          titledBox: [
+            "Representante Legal",
             { H: ["IS-nombreRL:Nombre", "IS-ApellidosRL:Apellidos"] }
           ]
         }
@@ -36,6 +37,20 @@ export const steps = {
     },
     {
       ID: "2",
+      name: "Ficheros",
+      icon: "fas fa-cloud-upload-alt",
+      content: [
+        {
+          titledBox: [
+            "ITA",
+            "NU:- lorem ipsum balbla /n \n - holi",
+            "UP-ITA:Fichero ITA"
+          ]
+        }
+      ]
+    },
+    {
+      ID: "3",
       name: "Empleados",
       icon: "fa fa-users",
       content: [

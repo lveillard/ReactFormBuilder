@@ -4,7 +4,7 @@ import { Container, Box, Tabs, Tab, TabList, TabLink, Icon } from "bloomer";
 
 import { steps } from "./data";
 
-import { db, auth } from "./firebase";
+import { db, auth, storage } from "./firebase";
 
 //import Steps, { Step } from "rc-steps";
 const cabecera = [
@@ -16,11 +16,13 @@ const cabecera = [
     { value: "Cuenta bancaria*", readOnly: true },
     { value: "Saldo de vacaciones*", readOnly: true },
     { value: "Fin de contrato temporal", readOnly: true },
-    { value: "¿No residente?", readOnly: true }
+    { value: "¿No residente?", readOnly: true },
+    { value: "Fecha de nacimiento", readOnly: true }
   ]
 ];
 
 const vacias = Array(1).fill([
+  { value: null },
   { value: null },
   { value: null },
   { value: null },
@@ -52,12 +54,25 @@ class App extends Component {
       empleados: null,
       tablaIniciada: false,
       grid: tabla,
+      user: null,
+      authed: false,
 
       form: {
         test: "54"
       }
     };
   }
+  componentDidMount() {
+    auth
+      .signInAnonymously()
+      .then(user => {
+        this.setState({ authed: true, user: user.user.uid });
+      })
+      .catch(error => {
+        this.setState({ error: error });
+      });
+  }
+  componentWillUnmount() {}
   updateProgress(total) {
     this.setState({ progress: total });
   }
