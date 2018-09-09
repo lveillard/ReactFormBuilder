@@ -2,12 +2,36 @@ import React, { Component } from "react";
 import Steps from "./Steps";
 import { Container, Box, Tabs, Tab, TabList, TabLink, Icon } from "bloomer";
 
-import "rc-steps/assets/index.css";
-import "rc-steps/assets/iconfont.css";
 import { steps } from "./data";
 
 import { db, auth } from "./firebase";
+
 //import Steps, { Step } from "rc-steps";
+const cabecera = [
+  [
+    { value: "Nombre*", readOnly: true },
+    { value: "Apellidos*", readOnly: true },
+    { value: "Teléfono", readOnly: true },
+    { value: "Email personal*", readOnly: true },
+    { value: "Cuenta bancaria*", readOnly: true },
+    { value: "Saldo de vacaciones*", readOnly: true },
+    { value: "Fin de contrato temporal", readOnly: true },
+    { value: "¿No residente?", readOnly: true }
+  ]
+];
+
+const vacias = Array(1).fill([
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null }
+]);
+
+var tabla = cabecera.concat(vacias);
 
 const a = Object.entries(steps.Steps).map(x => <li>{x[1].name}</li>);
 
@@ -17,11 +41,18 @@ class App extends Component {
 
     this.updateForm = this.updateForm.bind(this);
     this.updateProgress = this.updateProgress.bind(this);
+    this.updateModal = this.updateModal.bind(this);
+    this.updateState = this.updateState.bind(this);
     this.send = this.send.bind(this);
 
     this.state = {
       step: 0,
       progress: 0,
+      modal: 0,
+      empleados: null,
+      tablaIniciada: false,
+      grid: tabla,
+
       form: {
         test: "54"
       }
@@ -29,6 +60,14 @@ class App extends Component {
   }
   updateProgress(total) {
     this.setState({ progress: total });
+  }
+
+  updateModal(boolean) {
+    this.setState({ modal: boolean });
+  }
+
+  updateState(field, value) {
+    this.setState({ [field]: value });
   }
 
   updateForm(field, value) {
@@ -53,6 +92,7 @@ class App extends Component {
   render() {
     const b = Object.entries(steps.Steps).map(x => (
       <Tab
+        key={x[1].ID}
         isActive={this.state.step == x[1].ID}
         onClick={() => this.setState({ step: x[1].ID })}
       >
@@ -81,13 +121,20 @@ class App extends Component {
         </Steps>{" "}*/}
         <div>
           <div>{tabs}</div>
+
           <Steps
             step={this.state.step}
             form={this.state.form}
             updateForm={this.updateForm}
             updateProgress={this.updateProgress}
+            updateState={this.updateState}
             progress={this.state.progress}
+            modal={this.state.modal}
+            updateModal={this.updateModal}
             send={this.send}
+            empleados={this.state.empleados}
+            tablaIniciada={this.state.tablaIniciada}
+            grid={this.state.grid}
           />
         </div>
       </div>

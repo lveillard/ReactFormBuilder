@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Printer from "./components/Printer";
 import {
   Columns,
   Column,
@@ -16,11 +17,49 @@ import {
   Progress,
   Button,
   Icon,
-  Help
+  Help,
+  Modal,
+  ModalBackground,
+  ModalCard,
+  ModalCardHeader,
+  ModalCardTitle,
+  ModalCardFooter,
+  ModalCardBody,
+  Delete,
+  Content,
+  Message,
+  MessageHeader,
+  MessageBody
 } from "bloomer";
 import { steps, ops } from "./data";
 
+import Table from "./components/Table";
+
 class Steps extends Component {
+  removeEmployee(numero = 1) {
+    if (this.props.grid.length > numero) {
+      let temp = this.props.grid;
+      temp.splice(-1, 1);
+      this.props.updateState("grid", temp);
+    }
+  }
+  addEmployee(numero = 1) {
+    console.log(this.props.grid);
+    let temp = this.props.grid;
+    const vacias = Array(numero).fill([
+      { value: null },
+      { value: null },
+      { value: null },
+      { value: null },
+      { value: null },
+      { value: null },
+      { value: null },
+      { value: null }
+    ]);
+    var final = temp.concat(vacias);
+    console.log(final);
+    this.props.updateState("grid", final);
+  }
   renderComponent(component) {
     if (typeof component == "object") {
       return "holi";
@@ -35,19 +74,26 @@ class Steps extends Component {
         nameOrigin + 1,
         type == "S" ? component.lastIndexOf(":") : undefined
       );
-      console.log("code: " + code);
 
       switch (type) {
         case "I":
+          var InputType = "none";
+          if (mode == "T") {
+            InputType = "text";
+          }
+          if (mode == "N") {
+            InputType = "number";
+          }
+
           return (
             <Field>
               <Label>{name}</Label>
               <Control>
                 <Input
+                  key={name}
                   isColor=""
-                  key={code}
                   value={this.props.form[code]}
-                  type="text"
+                  type={InputType}
                   placeholder={code}
                   onChange={event =>
                     this.props.updateForm(code, event.target.value)
@@ -60,7 +106,70 @@ class Steps extends Component {
             </Field>
           );
         case "T":
-          return <Title isSize={3}>{name}</Title>;
+          return (
+            <Title hasTextAlign="centered" isSize={3}>
+              {name}
+            </Title>
+          );
+        case "M":
+          return (
+            <div>
+              <Columns>
+                <Column>
+                  <Label> Número de empleados </Label>
+                  <Control>
+                    {this.props.tablaIniciada ? (
+                      <Printer value={this.props.grid.length - 1}>
+                        {this.props.grid.length - 1}
+                      </Printer>
+                    ) : (
+                      <Input
+                        isColor=""
+                        value={this.props.empleados}
+                        type="number"
+                        onChange={event =>
+                          this.props.updateState(
+                            "empleados",
+                            event.target.value
+                          )
+                        }
+                      />
+                    )}
+                  </Control>
+                </Column>
+                {this.props.empleados ? (
+                  <Column hasTextAlign="centered">
+                    <Label>Datos de empleados </Label>
+                    <Button
+                      isColor="info"
+                      isSize={3}
+                      onClick={() => {
+                        if (
+                          this.props.empleados - this.props.grid.length + 1 >
+                          0
+                        ) {
+                          this.addEmployee(
+                            this.props.empleados - this.props.grid.length + 1
+                          );
+                        }
+                        this.props.updateState("tablaIniciada", true);
+                        this.props.updateModal(true);
+                      }}
+                    >
+                      {!this.props.tablaIniciada
+                        ? "Crear tabla"
+                        : "Editar datos"}
+                    </Button>
+                  </Column>
+                ) : (
+                  <Column> {" " + " "} </Column>
+                )}
+              </Columns>
+            </div>
+          );
+
+        case "E":
+          return <div />;
         case "S":
           var options = component.slice(component.lastIndexOf(":") + 1);
           return (
@@ -90,18 +199,19 @@ class Steps extends Component {
   renderBox(boxContent) {
     return (
       <Tile
+        key={JSON.stringify(boxContent)}
         isChild
         render={props => (
           <Box {...props}>
-            {console.log(boxContent)}
             {boxContent.map(
               x =>
                 typeof x == "string" ? (
                   this.renderComponent(x)
                 ) : (
                   <Columns>
-                    {" "}
-                    {x.H.map(y => <Column>{this.renderComponent(y)}</Column>)}
+                    {x.H.map(y => (
+                      <Column key={y}>{this.renderComponent(y)}</Column>
+                    ))}
                   </Columns>
                 )
             )}
@@ -118,6 +228,130 @@ class Steps extends Component {
 
     return (
       <div className="Steps">
+        <Modal isActive={this.props.modal}>
+          <ModalBackground />
+          <ModalCard style={{ width: "94%" }}>
+            <ModalCardHeader>
+              <ModalCardTitle>Datos empleados</ModalCardTitle>
+              <Delete onClick={() => this.props.updateModal(false)} />
+            </ModalCardHeader>
+            <ModalCardBody>
+              <Button
+                onClick={() => this.removeEmployee()}
+                isColor="danger"
+                isPulled="right"
+                style={{ margin: "10px" }}
+              >
+                {" "}
+                <Icon className="fas fa-user-minus" />{" "}
+                <p>Eliminar último empleado</p>
+              </Button>
+              <Button
+                onClick={() => this.addEmployee()}
+                isColor="warning"
+                isPulled="left"
+                style={{ margin: "10px" }}
+              >
+                <Icon className="fas fa-user-plus" />
+                <p>Añadir empleado</p>
+              </Button>
+              <Button
+                isStatic
+                style={{ margin: "10px", cursor: "auto" }}
+                isColor="info"
+                isPulled="left"
+              >
+                {this.props.grid.length - 1 + " empleados"}
+              </Button>
+
+              <Table
+                updateState={this.props.updateState}
+                iniciada={this.props.tablaIniciada}
+                grid={this.props.grid}
+              >
+                {name}{" "}
+              </Table>
+              <Columns>
+                <Column>
+                  <Message>
+                    <MessageHeader>
+                      <p>Email personal</p>
+                    </MessageHeader>
+                    <MessageBody>
+                      <ul style={{ listStyleType: "disc" }}>
+                        <li>El empleado recibirá las nóminas en este email</li>{" "}
+                        <li>
+                          En caso de activación del espacio empleado, este será
+                          el email con el que el empleado pueda acceder
+                        </li>{" "}
+                        <li>
+                          {" "}
+                          De utilizar el email profesional, el empleado perdera
+                          el acceso a sus nóminas si finaliza la relación
+                          laboral
+                        </li>
+                      </ul>
+                    </MessageBody>
+                  </Message>
+                </Column>
+                <Column>
+                  <Message>
+                    <MessageHeader>
+                      <p>Saldo de vacaciones</p>
+                    </MessageHeader>
+                    <MessageBody>
+                      <ul style={{ listStyleType: "disc" }}>
+                        <li>
+                          PayFIt alculará automaticamente las vacaciones
+                          disponibles, pero es necesario que conozcamos el
+                          estado actual
+                        </li>{" "}
+                        <li>
+                          El saldo que necesitamos es con fecha de final del mes
+                          anterior a la entrada en PayFit
+                        </li>{" "}
+                        <li>
+                          {" "}
+                          Este dato es muy importante y tiene impacto no sólo en
+                          el seguimiento de las vacaciones pero también en el
+                          cálculo de finiquitos
+                        </li>
+                      </ul>
+                    </MessageBody>
+                  </Message>
+                </Column>
+                <Column>
+                  <Message>
+                    <MessageHeader>
+                      <p>Fecha de fin de contrato temporal</p>
+                    </MessageHeader>
+                    <MessageBody>
+                      <ul style={{ listStyleType: "disc" }}>
+                        <li>
+                          Si el contrato de este empleado es temporal,
+                          necesitamos saber la fecha de finalización del mismo
+                        </li>{" "}
+                        <li>
+                          PayFit te mantendrá informado sobre los contratos que
+                          esten cerca de llegar a su fin.
+                        </li>{" "}
+                      </ul>
+                    </MessageBody>
+                  </Message>
+                </Column>
+              </Columns>
+            </ModalCardBody>
+            <ModalCardFooter>
+              <Button
+                onClick={() => this.props.updateModal(false)}
+                isColor="info"
+              >
+                Guardar
+              </Button>
+            </ModalCardFooter>
+          </ModalCard>
+        </Modal>
+
         <Columns isCentered>
           <Column isSize={2} />
           <Column>

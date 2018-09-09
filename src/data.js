@@ -33,6 +33,16 @@ export const steps = {
           ]
         }
       ]
+    },
+    {
+      ID: "2",
+      name: "Empleados",
+      icon: "fa fa-users",
+      content: [
+        {
+          box: ["TT:Empleados", "M-datosEmpleados:Datos de empleados"]
+        }
+      ]
     }
   ]
 };
