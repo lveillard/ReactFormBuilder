@@ -36,6 +36,7 @@ import {
 import { steps, ops } from "./data";
 
 import Table from "./components/Table";
+import TableEmpty from "./components/TableEmpty";
 
 class Steps extends Component {
   removeEmployee(numero = 1) {
@@ -62,6 +63,10 @@ class Steps extends Component {
     var final = temp.concat(vacias);
     console.log(final);
     this.props.updateState("grid", final);
+  }
+  prepareMessage(name) {
+    const final = name + "\n holi" + "holi2";
+    return final;
   }
   renderComponent(component) {
     if (typeof component == "object") {
@@ -95,7 +100,7 @@ class Steps extends Component {
                 <Input
                   key={name}
                   isColor=""
-                  value={this.props.form[code]}
+                  value={this.props.varsMap[code]}
                   type={InputType}
                   placeholder={code}
                   onChange={event =>
@@ -117,8 +122,15 @@ class Steps extends Component {
           );
         case "U":
           return <Uploader code={code} />;
+        case "D":
+          return <TableEmpty titles={["Holi", "hola", "empleados"]} rows={5} />;
         case "N":
-          return <Notification>{name}</Notification>;
+          const contenido = name;
+          return (
+            <Notification style={{ whiteSpace: "pre-line" }}>
+              {contenido}
+            </Notification>
+          );
         case "M":
           return (
             <div>
@@ -187,7 +199,7 @@ class Steps extends Component {
               <Control>
                 <Select
                   key={code}
-                  value={this.props.form[code]}
+                  value={this.props.varsMap[code]}
                   isFullWidth
                   onChange={event =>
                     this.props.updateForm(code, event.target.value)
@@ -218,15 +230,15 @@ class Steps extends Component {
             <Box {...props}>
               {boxContent.map(
                 x =>
-                  typeof x == "string" ? (
-                    this.renderComponent(x)
-                  ) : (
-                    <Columns>
-                      {x.H.map(y => (
-                        <Column key={y}>{this.renderComponent(y)}</Column>
-                      ))}
-                    </Columns>
-                  )
+                  typeof x == "string"
+                    ? this.renderComponent(x)
+                    : x.H && (
+                        <Columns>
+                          {x.H.map(y => (
+                            <Column key={y}>{this.renderComponent(y)}</Column>
+                          ))}
+                        </Columns>
+                      )
               )}
             </Box>
           )}
@@ -282,9 +294,7 @@ class Steps extends Component {
                 updateState={this.props.updateState}
                 iniciada={this.props.tablaIniciada}
                 grid={this.props.grid}
-              >
-                {name}{" "}
-              </Table>
+              />
               <Columns>
                 <Column>
                   <Message>
@@ -375,7 +385,7 @@ class Steps extends Component {
                   <Progress
                     isColor="warning"
                     isSize="small"
-                    value={Object.keys(this.props.form).length}
+                    value={Object.keys(this.props.varsMap).length}
                     max={100}
                   />
                 </Column>

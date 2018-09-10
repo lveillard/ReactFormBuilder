@@ -9,6 +9,16 @@ export const steps = {
           titledBox: [
             "Identificación de la empresa",
             "IT-nombreEmpresa:Nombre de la empresa",
+            "IT-nombreFiscal:Nombre fiscal",
+            {
+              C: {
+                condition: true,
+                type: "Input",
+                mode: "text",
+                var: "test",
+                name: "Holi"
+              }
+            },
             "IT-nombreFiscal:Nombre fiscal"
           ]
         },
@@ -16,6 +26,14 @@ export const steps = {
           titledBox: [
             "Representante Legal",
             { H: ["IS-nombreRL:Nombre", "IS-ApellidosRL:Apellidos"] }
+          ]
+        },
+        {
+          titledBox: [
+            "Centros de trabajo",
+            "NU:Los centros de trabajo estan definidos por: \n• Un código de cuenta de cotización (C.C.C.) \n• Un convenio colectivo",
+            "IN-numeroCentros:Número de centros de trabajo",
+            "DN-tabla1:Centros de trabajo"
           ]
         }
       ]
@@ -43,8 +61,16 @@ export const steps = {
         {
           titledBox: [
             "ITA",
-            "NU:- lorem ipsum balbla /n \n - holi",
-            "UP-ITA:Fichero ITA"
+            "NU:• lorem ipsum balbla\n • holi",
+            "UP-ITA:Fichero ITA",
+            "UP-test:Pene ITA"
+          ]
+        },
+        {
+          titledBox: [
+            "ITA",
+            "NU:• lorem ipsum balbla\n • holi",
+            { H: ["UP-ITA:Fichero ITA", "UP-ITA:Fichero ITA"] }
           ]
         }
       ]

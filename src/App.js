@@ -5,7 +5,6 @@ import { Container, Box, Tabs, Tab, TabList, TabLink, Icon } from "bloomer";
 import { steps } from "./data";
 
 import { db, auth, storage } from "./firebase";
-
 //import Steps, { Step } from "rc-steps";
 const cabecera = [
   [
@@ -57,7 +56,7 @@ class App extends Component {
       user: null,
       authed: false,
 
-      form: {
+      varsMap: {
         test: "54"
       }
     };
@@ -139,7 +138,7 @@ class App extends Component {
 
           <Steps
             step={this.state.step}
-            form={this.state.form}
+            varsMap={this.state.varsMap}
             updateForm={this.updateForm}
             updateProgress={this.updateProgress}
             updateState={this.updateState}

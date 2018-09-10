@@ -12,7 +12,8 @@ class Uploader extends React.Component {
       progress: 0,
       task: null,
       error: null,
-      canceled: null
+      canceled: null,
+      uploadState: null
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -55,9 +56,10 @@ class Uploader extends React.Component {
         var progreso = (100 * snapshot.bytesTransferred) / snapshot.totalBytes;
         console.log(progreso);
         this.handleProgress(progreso);
+        this.setState({ uploadState: snapshot.state });
       });
       task
-        //.then(snapshot => snapshot.ref.getDownloadURL())
+        .then(snapshot => snapshot.ref.getDownloadURL())
         .then(url => {
           document.querySelector("#someImageTagID").src = url;
         })
@@ -68,15 +70,12 @@ class Uploader extends React.Component {
           switch (error.code) {
             case "storage/unauthorized":
               // User doesn't have permission to access the object
-              alert("permiso");
               break;
             case "storage/canceled":
               // User canceled the upload
-              alert("cancelado");
               break;
             case "storage/unknown":
               // Unknown error occurred, inspect error.serverResponse
-              alert("unknown");
               break;
           }
         });

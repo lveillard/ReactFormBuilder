@@ -9,7 +9,7 @@ import faTimes from "@fortawesome/fontawesome-free-solid";
 import "bulma/css/bulma.css";
 import "bulma-steps";
 
-import App from "./App";
+import Routes from "./Routes";
 import { Container, Section } from "bloomer";
 import "./style.css";
 
@@ -20,7 +20,7 @@ document.body.style.height = "100vh";
 ReactDOM.render(
   <Section className="main">
     <Container>
-      <App />
+      <Routes />
     </Container>
   </Section>,
   document.getElementById("root")
