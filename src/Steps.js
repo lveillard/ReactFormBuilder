@@ -33,12 +33,25 @@ import {
   MessageHeader,
   MessageBody
 } from "bloomer";
-import { steps, ops } from "./data";
-
+import holi, { steps, ops } from "./data/data";
+import { dict } from "./dictionary/dict";
+import { isOneOf } from "./aux/functions";
 import Table from "./components/Table";
 import TableEmpty from "./components/TableEmpty";
 
 class Steps extends Component {
+  checkCondition(line) {
+    if (line["condition"] != undefined) {
+      //console.log(componente["condition"]);
+      var conditionReady = line["condition"].replace(
+        /(\@)(\w*)/g,
+        "this.props.varsMap.$2"
+      );
+      var conditionResult = eval(conditionReady);
+      //console.log(conditionResult + " que viene de " + conditionReady);
+      return conditionalResult;
+    }
+  }
   removeEmployee(numero = 1) {
     if (this.props.grid.length > numero) {
       let temp = this.props.grid;
@@ -46,6 +59,7 @@ class Steps extends Component {
       this.props.updateState("grid", temp);
     }
   }
+
   addEmployee(numero = 1) {
     console.log(this.props.grid);
     let temp = this.props.grid;
@@ -68,149 +82,211 @@ class Steps extends Component {
     const final = name + "\n holi" + "holi2";
     return final;
   }
-  renderComponent(component) {
-    if (typeof component == "object") {
-      return "holi";
-    }
-    if (typeof component == "string") {
-      var type = component.charAt(0);
-      var mode = component.charAt(1);
-      var nameOrigin = component.indexOf(":");
-      var codeOrigin = component.indexOf("-");
-      var code = component.slice(0, nameOrigin);
-      var name = component.slice(
-        nameOrigin + 1,
-        type == "S" ? component.lastIndexOf(":") : undefined
+  renderComponent(componente) {
+    // If is simple
+    if (typeof componente == "string") {
+      var componentString = componente;
+      var componente = { type: null };
+      componente["type"] = dict[componentString.charAt(0)].type;
+      //console.log(dict[componentString.charAt(0)]);
+      componente["origin"] = "string";
+
+      try {
+        if (!componentString.charAt(1).isOneOf(["-", ":", "X"])) {
+          componente["mode"] =
+            dict[componentString.charAt(0)].mode[componentString.charAt(1)];
+        }
+      } catch (error) {
+        alert(
+          "Error: " + error + " en componente " + JSON.stringify(componente)
+        );
+      }
+      //3rd char not includes - neither :
+      if (!["-", ":"].includes(componentString.charAt(2))) {
+        componente["color"] =
+          dict[componentString.charAt(0)].color[componentString.charAt(2)];
+      }
+      let tempSliced = componentString.slice(0, componentString.indexOf(":"));
+      componente["code"] = tempSliced.slice(tempSliced.indexOf("-") + 1);
+
+      componente["name"] = componentString.slice(
+        componentString.indexOf(":") + 1,
+        componentString.type === "S"
+          ? componentString.lastIndexOf(":")
+          : undefined
       );
+      componente["options"] = componentString.slice(
+        componentString.lastIndexOf(":") + 1
+      );
+    }
+    switch (componente.type) {
+      case "Input":
+        return (
+          <Field>
+            <Label>{componente.name}</Label>
+            <Control>
+              <Input
+                key={componente.name}
+                isColor=""
+                value={this.props.varsMap[componente.code]}
+                type={componente.mode}
+                placeholder={componente.code}
+                onChange={event =>
+                  this.props.updateVarsMap(componente.code, event.target.value)
+                }
+              />
+            </Control>
+          </Field>
+        );
+      case "Title":
+        return (
+          <Title hasTextAlign="centered" isSize={3}>
+            {componente.name}
+          </Title>
+        );
+      case "Uploader":
+        return (
+          <Uploader
+            code={componente.code}
+            mode={componente.mode}
+            color={componente.color}
+          />
+        );
+      case "Button":
+        return (
+          <Field>
+            <div style={{ textAlign: componente.mode == "Label" && "center" }}>
+              {componente.mode == "Label" && <Label>Datos de empleados </Label>}
 
-      switch (type) {
-        case "I":
-          var InputType = "none";
-          if (mode == "T") {
-            InputType = "text";
-          }
-          if (mode == "N") {
-            InputType = "number";
-          }
-
-          return (
-            <Field>
-              <Label>{name}</Label>
-              <Control>
-                <Input
-                  key={name}
-                  isColor=""
-                  value={this.props.varsMap[code]}
-                  type={InputType}
-                  placeholder={code}
-                  onChange={event =>
-                    this.props.updateForm(code, event.target.value)
-                  }
-                />
-              </Control>
-              {false && (
-                <Help isColor="success">This username is available</Help>
-              )}
-            </Field>
-          );
-        case "T":
-          console.log(component);
-          return (
-            <Title hasTextAlign="centered" isSize={3}>
-              {name}
-            </Title>
-          );
-        case "U":
-          return <Uploader code={code} />;
-        case "D":
-          return <TableEmpty titles={["Holi", "hola", "empleados"]} rows={5} />;
-        case "N":
-          const contenido = name;
-          return (
-            <Notification style={{ whiteSpace: "pre-line" }}>
-              {contenido}
-            </Notification>
-          );
-        case "M":
-          return (
-            <div>
-              <Columns>
-                <Column>
-                  <Label> Número de empleados </Label>
-                  <Control>
-                    {this.props.tablaIniciada ? (
-                      <Printer value={this.props.grid.length - 1}>
-                        {this.props.grid.length - 1}
-                      </Printer>
-                    ) : (
-                      <Input
-                        isColor=""
-                        value={this.props.empleados}
-                        type="number"
-                        min="0"
-                        onChange={event =>
-                          this.props.updateState(
-                            "empleados",
-                            event.target.value
-                          )
-                        }
-                      />
-                    )}
-                  </Control>
-                </Column>
-                {this.props.empleados ? (
-                  <Column hasTextAlign="centered">
-                    <Label>Datos de empleados </Label>
-                    <Button
-                      isColor="info"
-                      isSize={3}
-                      onClick={() => {
-                        if (
-                          this.props.empleados - this.props.grid.length + 1 >
-                          0
-                        ) {
-                          this.addEmployee(
-                            this.props.empleados - this.props.grid.length + 1
-                          );
-                        }
-                        this.props.updateState("tablaIniciada", true);
-                        this.props.updateModal(true);
-                      }}
-                    >
-                      {!this.props.tablaIniciada
-                        ? "Crear tabla"
-                        : "Editar datos"}
-                    </Button>
-                  </Column>
-                ) : (
-                  <Column> {" " + " "} </Column>
-                )}
-              </Columns>
+              <Button isColor="info" isSize={3}>
+                {componente.name}
+              </Button>
             </div>
-          );
-
-        case "E":
-          return <div />;
-        case "S":
-          var options = component.slice(component.lastIndexOf(":") + 1);
+          </Field>
+        );
+      case "Datasheet":
+        if (componente.mode == "edit") {
+          return <TableEmpty titles={["Holi", "hola", "empleados"]} rows={5} />;
+        }
+        if ((componente.mode = "view")) {
           return (
-            <Field>
-              <Label>{name}</Label>
-              <Control>
-                <Select
-                  key={code}
-                  value={this.props.varsMap[code]}
-                  isFullWidth
-                  onChange={event =>
-                    this.props.updateForm(code, event.target.value)
-                  }
-                >
-                  <option style={{ display: "none" }} />
-                  {ops[options].map(x => <option>{x}</option>)}
-                </Select>
-              </Control>
-            </Field>
+            <TableEmpty
+              titles={["Holi", "hola", "empleados"]}
+              grid={this.props.varsMap[componente.code]}
+            />
           );
+        }
+
+      case "Notification":
+        const contenido = componente.name;
+        return (
+          <Notification
+            isColor={componente.color}
+            style={{ whiteSpace: "pre-line" }}
+          >
+            {contenido}
+          </Notification>
+        );
+      case "Especial":
+        return (
+          <div>
+            <Columns>
+              <Column>
+                <Label> Número de empleados </Label>
+                <Control>
+                  {this.props.tablaIniciada ? (
+                    <Printer value={this.props.grid.length - 1}>
+                      {this.props.grid.length - 1}
+                    </Printer>
+                  ) : (
+                    <Input
+                      isColor=""
+                      value={this.props.empleados}
+                      type="number"
+                      min="0"
+                      onChange={event =>
+                        this.props.updateState("empleados", event.target.value)
+                      }
+                    />
+                  )}
+                </Control>
+              </Column>
+              {this.props.empleados ? (
+                <Column hasTextAlign="centered">
+                  <Label>Datos de empleados </Label>
+                  <Button
+                    isColor="info"
+                    isSize={3}
+                    onClick={() => {
+                      if (
+                        this.props.empleados - this.props.grid.length + 1 >
+                        0
+                      ) {
+                        this.addEmployee(
+                          this.props.empleados - this.props.grid.length + 1
+                        );
+                      }
+                      this.props.updateState("tablaIniciada", true);
+                      this.props.updateModal(true);
+                    }}
+                  >
+                    {!this.props.tablaIniciada ? "Crear tabla" : "Editar datos"}
+                  </Button>
+                </Column>
+              ) : (
+                <Column> {" " + " "} </Column>
+              )}
+            </Columns>
+          </div>
+        );
+      case "Select":
+        return (
+          <Field>
+            <Label>{componente.name}</Label>
+            <Control>
+              <Select
+                isColor={componente.color}
+                key={componente.code}
+                value={this.props.varsMap[componente.code]}
+                isFullWidth
+                onChange={event =>
+                  this.props.updateVarsMap(componente.code, event.target.value)
+                }
+              >
+                <option style={{ display: "none" }} />
+                {ops[componente.options].map(x => <option>{x}</option>)}
+              </Select>
+            </Control>
+          </Field>
+        );
+      default:
+        return null;
+    }
+  }
+
+  renderLine(line) {
+    if (typeof line == "string") {
+      var componente = line;
+      return this.renderComponent(componente);
+    } else {
+      switch (Object.keys(line)[0]) {
+        case "H":
+          return (
+            <Columns>
+              {line.H.map(
+                y =>
+                  typeof y == "string" ? (
+                    <Column key={y}> {this.renderComponent(y)} </Column>
+                  ) : (
+                    //recursive till ending component nesting
+                    this.renderLine(y)
+                  )
+              )}
+            </Columns>
+          );
+        case "C":
+          console.log(JSON.stringify(line.C));
+          return <div key={line.C}> {this.renderComponent(line.C)} </div>;
         default:
           return null;
       }
@@ -220,27 +296,14 @@ class Steps extends Component {
   renderBox(boxContent, boxTitle = "") {
     return (
       <Box style={{ padding: "0px" }}>
-        <Printer bold title centered background="#ffdd57" color="#847425">
+        <Printer bold title centered background="#0864cf" color="white">
           {boxTitle}{" "}
         </Printer>
         <Tile
           key={JSON.stringify(boxContent)}
           isChild
           render={props => (
-            <Box {...props}>
-              {boxContent.map(
-                x =>
-                  typeof x == "string"
-                    ? this.renderComponent(x)
-                    : x.H && (
-                        <Columns>
-                          {x.H.map(y => (
-                            <Column key={y}>{this.renderComponent(y)}</Column>
-                          ))}
-                        </Columns>
-                      )
-              )}
-            </Box>
+            <Box {...props}>{boxContent.map(x => this.renderLine(x))}</Box>
           )}
         />
       </Box>

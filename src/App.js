@@ -1,10 +1,20 @@
 import React, { Component } from "react";
 import Steps from "./Steps";
-import { Container, Box, Tabs, Tab, TabList, TabLink, Icon } from "bloomer";
+import {
+  Container,
+  Box,
+  Tabs,
+  Tab,
+  TabList,
+  TabLink,
+  Icon,
+  Button
+} from "bloomer";
 
-import { steps } from "./data";
+import { steps } from "./data/data";
 
 import { db, auth, storage } from "./firebase";
+import Console from "./components/Console";
 //import Steps, { Step } from "rc-steps";
 const cabecera = [
   [
@@ -32,6 +42,9 @@ const vacias = Array(1).fill([
   { value: null }
 ]);
 
+// this lets the console read the object "data"
+var data = steps;
+
 var tabla = cabecera.concat(vacias);
 
 const a = Object.entries(steps.Steps).map(x => <li>{x[1].name}</li>);
@@ -40,11 +53,12 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.updateForm = this.updateForm.bind(this);
+    this.updateVarsMap = this.updateVarsMap.bind(this);
     this.updateProgress = this.updateProgress.bind(this);
     this.updateModal = this.updateModal.bind(this);
     this.updateState = this.updateState.bind(this);
     this.send = this.send.bind(this);
+    this.evaluate = this.evaluate.bind(this);
 
     this.state = {
       step: 0,
@@ -61,6 +75,17 @@ class App extends Component {
       }
     };
   }
+  evaluate(content) {
+    try {
+      let evaluado = JSON.stringify(eval(content));
+
+      return evaluado;
+    } catch (error) {
+      console.log(error);
+      return JSON.stringify(error);
+    }
+  }
+
   componentDidMount() {
     auth
       .signInAnonymously()
@@ -84,16 +109,16 @@ class App extends Component {
     this.setState({ [field]: value });
   }
 
-  updateForm(field, value) {
-    let jasper = Object.assign({}, this.state.form); //creating copy of object
+  updateVarsMap(field, value) {
+    let jasper = Object.assign({}, this.state.varsMap); //creating copy of object
     jasper[field] = value; //updating value
-    this.setState({ form: jasper });
+    this.setState({ varsMap: jasper });
   }
 
   send() {
     db.collection("test")
       .add({
-        info: this.state.form
+        info: this.state.varsMap
       })
       .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);
@@ -139,7 +164,7 @@ class App extends Component {
           <Steps
             step={this.state.step}
             varsMap={this.state.varsMap}
-            updateForm={this.updateForm}
+            updateVarsMap={this.updateVarsMap}
             updateProgress={this.updateProgress}
             updateState={this.updateState}
             progress={this.state.progress}
@@ -150,6 +175,7 @@ class App extends Component {
             tablaIniciada={this.state.tablaIniciada}
             grid={this.state.grid}
           />
+          <Console evaluate={this.evaluate} active={true} />
         </div>
       </div>
     );

@@ -16,3 +16,9 @@
 .button p {
   text-indent: 0.5rem;
 }
+
+input.consola::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: white;
+  opacity: 0.5;
+}

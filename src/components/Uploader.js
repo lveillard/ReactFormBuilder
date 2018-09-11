@@ -95,7 +95,14 @@ class Uploader extends React.Component {
     return (
       <div className={"Uploader"}>
         <div style={{ marginBottom: "24px" }} className="field">
-          <div className="file is-warning has-name is-boxed">
+          <div
+            className={
+              "file is-" +
+              this.props.mode +
+              " has-name is-boxed is-" +
+              this.props.color
+            }
+          >
             <label
               style={{
                 cursor:
