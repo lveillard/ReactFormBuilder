@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Printer from "./components/Printer";
 import Uploader from "./components/Uploader";
+import DynComp from "./components/DynComp";
 import {
   Columns,
   Column,
@@ -40,18 +41,21 @@ import Table from "./components/Table";
 import TableEmpty from "./components/TableEmpty";
 
 class Steps extends Component {
-  checkCondition(line) {
-    if (line["condition"] != undefined) {
+  checkCondition(condition) {
+    if (condition != undefined) {
       //console.log(componente["condition"]);
-      var conditionReady = line["condition"].replace(
+      var conditionReady = condition.replace(
         /(\@)(\w*)/g,
         "this.props.varsMap.$2"
       );
       var conditionResult = eval(conditionReady);
       //console.log(conditionResult + " que viene de " + conditionReady);
-      return conditionalResult;
+      return conditionResult;
+    } else {
+      return "holi";
     }
   }
+
   removeEmployee(numero = 1) {
     if (this.props.grid.length > numero) {
       let temp = this.props.grid;
@@ -82,7 +86,53 @@ class Steps extends Component {
     const final = name + "\n holi" + "holi2";
     return final;
   }
+
+  renderComp(line) {
+    // Preparing simple component
+    if (typeof line == "string") {
+      var componente = {};
+      let splitted = line.split("··");
+      let generator = splitted[0].split("@")[0];
+      try {
+        componente.type = dict[generator.charAt(0)].type;
+      } catch (error) {
+        console.error("Data.js bad format, line: " + line);
+      }
+      try {
+        componente.mode = dict[generator.charAt(0)].mode[generator.charAt(1)];
+      } catch (error) {
+        componente.mode = "X";
+      }
+      try {
+        componente.color = dict[generator.charAt(0)].color[generator.charAt(2)];
+      } catch (error) {
+        componente.color = "X";
+      }
+      componente.code = splitted[0].split("@")[1];
+      componente.name = splitted[1];
+      componente.extras = splitted[2];
+      componente.origin = "string";
+    }
+    // Preparing complex componente
+    else {
+      var componente = line;
+      var ObjProps = componente.props;
+    }
+    return (
+      <DynComp
+        key={JSON.stringify(componente)}
+        componente={componente}
+        varsMap={this.props.varsMap}
+        updateVarsMap={this.props.updateVarsMap}
+        {...ObjProps}
+      >
+        holi
+      </DynComp>
+    );
+  }
+
   renderComponent(componente) {
+    // get props for complex
     // If is simple
     if (typeof componente == "string") {
       var componentString = componente;
@@ -115,9 +165,13 @@ class Steps extends Component {
           ? componentString.lastIndexOf(":")
           : undefined
       );
-      componente["options"] = componentString.slice(
-        componentString.lastIndexOf(":") + 1
+      componente["extras"] = componentString.slice(
+        componentString.lastIndexOf(":")
       );
+    } else {
+      //Assign origin for the rest
+      componente["origin"] = Object.keys(componente)[0];
+      let propsObj = componente["props"];
     }
     switch (componente.type) {
       case "Input":
@@ -134,6 +188,7 @@ class Steps extends Component {
                 onChange={event =>
                   this.props.updateVarsMap(componente.code, event.target.value)
                 }
+                {...propsObj}
               />
             </Control>
           </Field>
@@ -156,9 +211,13 @@ class Steps extends Component {
         return (
           <Field>
             <div style={{ textAlign: componente.mode == "Label" && "center" }}>
-              {componente.mode == "Label" && <Label>Datos de empleados </Label>}
+              {componente.mode == "Label" ? (
+                <Label> {componente.label || componente.extras} </Label>
+              ) : (
+                <Label> hli </Label>
+              )}
 
-              <Button isColor="info" isSize={3}>
+              <Button isColor="info" isSize={3} {...propsObj}>
                 {componente.name}
               </Button>
             </div>
@@ -187,7 +246,15 @@ class Steps extends Component {
             {contenido}
           </Notification>
         );
+      case "Empty":
+        return (
+          <Column>
+            {" "}
+            <br />{" "}
+          </Column>
+        );
       case "Especial":
+        const propsObj = { min: "2" };
         return (
           <div>
             <Columns>
@@ -204,6 +271,7 @@ class Steps extends Component {
                       value={this.props.empleados}
                       type="number"
                       min="0"
+                      {...propsObj}
                       onChange={event =>
                         this.props.updateState("empleados", event.target.value)
                       }
@@ -254,7 +322,7 @@ class Steps extends Component {
                 }
               >
                 <option style={{ display: "none" }} />
-                {ops[componente.options].map(x => <option>{x}</option>)}
+                {ops[componente.extras].map(x => <option>{x}</option>)}
               </Select>
             </Control>
           </Field>
@@ -265,32 +333,25 @@ class Steps extends Component {
   }
 
   renderLine(line) {
-    if (typeof line == "string") {
-      var componente = line;
-      return this.renderComponent(componente);
-    } else {
-      switch (Object.keys(line)[0]) {
-        case "H":
-          return (
-            <Columns>
-              {line.H.map(
-                y =>
-                  typeof y == "string" ? (
-                    <Column key={y}> {this.renderComponent(y)} </Column>
-                  ) : (
-                    //recursive till ending component nesting
-                    this.renderLine(y)
-                  )
-              )}
-            </Columns>
-          );
-        case "C":
-          console.log(JSON.stringify(line.C));
-          return <div key={line.C}> {this.renderComponent(line.C)} </div>;
-        default:
-          return null;
-      }
-    }
+    return typeof line == "string" ? (
+      this.renderComp(line)
+    ) : Object.keys(line)[0] == "C" && this.checkCondition(line.C.condition) ? (
+      this.renderComp(line.C)
+    ) : Object.keys(line)[0] == "H" ? (
+      <Columns>
+        {line.H.map(
+          y =>
+            typeof y == "string" ? (
+              <Column key={y}> {this.renderComp(y)} </Column>
+            ) : (
+              //recursive till ending component nesting
+              this.checkCondition(y.C.condition) && (
+                <Column key={y.C.code}>{this.renderLine(y)}</Column>
+              )
+            )
+        )}
+      </Columns>
+    ) : null;
   }
 
   renderBox(boxContent, boxTitle = "") {

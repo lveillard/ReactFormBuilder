@@ -22,3 +22,7 @@ input.consola::placeholder {
   color: white;
   opacity: 0.5;
 }
+.label.label {
+  white-space: nowrap;
+  overflow: hidden;
+}
