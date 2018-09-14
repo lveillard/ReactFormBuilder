@@ -1,46 +1,120 @@
 import React, { Component } from "react";
 import Steps from "./Steps";
-import { Container, Box, Tabs, Tab, TabList, TabLink, Icon } from "bloomer";
+import {
+  Container,
+  Box,
+  Tabs,
+  Tab,
+  TabList,
+  TabLink,
+  Icon,
+  Button
+} from "bloomer";
 
-import "rc-steps/assets/index.css";
-import "rc-steps/assets/iconfont.css";
-import { steps } from "./data";
+import { steps } from "./data/data";
 
-import { db, auth } from "./firebase";
+import { db, auth, storage } from "./firebase";
+import Console from "./components/Console";
 //import Steps, { Step } from "rc-steps";
+const cabecera = [
+  [
+    { value: "Nombre*", readOnly: true },
+    { value: "Apellidos*", readOnly: true },
+    { value: "Teléfono", readOnly: true },
+    { value: "Email personal*", readOnly: true },
+    { value: "Cuenta bancaria*", readOnly: true },
+    { value: "Saldo de vacaciones*", readOnly: true },
+    { value: "Fin de contrato temporal", readOnly: true },
+    { value: "¿No residente?", readOnly: true },
+    { value: "Fecha de nacimiento", readOnly: true }
+  ]
+];
 
-const a = Object.entries(steps.Steps).map(x => <li>{x[1].name}</li>);
+const vacias = Array(1).fill([
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null },
+  { value: null }
+]);
+
+// this lets the console read the object "data"s
+var tabla = cabecera.concat(vacias);
 
 class App extends Component {
   constructor(props) {
     super(props);
 
-    this.updateForm = this.updateForm.bind(this);
+    this.updateVarsMap = this.updateVarsMap.bind(this);
     this.updateProgress = this.updateProgress.bind(this);
+    this.updateModal = this.updateModal.bind(this);
+    this.updateState = this.updateState.bind(this);
     this.send = this.send.bind(this);
+    this.evaluate = this.evaluate.bind(this);
 
     this.state = {
       step: 0,
       progress: 0,
-      form: {
+      modal: 0,
+      empleados: null,
+      tablaIniciada: false,
+      grid: tabla,
+      user: null,
+      authed: false,
+
+      varsMap: {
         test: "54"
       }
     };
   }
+  evaluate(content) {
+    try {
+      let evaluado = JSON.stringify(eval(content));
+
+      return evaluado;
+    } catch (error) {
+      console.log(error);
+      return JSON.stringify(error);
+    }
+  }
+
+  componentDidMount() {
+    auth
+      .signInAnonymously()
+      .then(user => {
+        this.setState({ authed: true, user: user.user.uid });
+      })
+      .catch(error => {
+        this.setState({ error: error });
+      });
+  }
+  componentWillUnmount() {}
   updateProgress(total) {
     this.setState({ progress: total });
   }
 
-  updateForm(field, value) {
-    let jasper = Object.assign({}, this.state.form); //creating copy of object
+  updateModal() {
+    this.setState({ modal: !this.state.modal });
+  }
+
+  updateState(field, value) {
+    this.setState({ [field]: value });
+  }
+
+  updateVarsMap(field, value) {
+    let jasper = Object.assign({}, this.state.varsMap); //creating copy of object
     jasper[field] = value; //updating value
-    this.setState({ form: jasper });
+    this.setState({ varsMap: jasper });
   }
 
   send() {
     db.collection("test")
       .add({
-        info: this.state.form
+        info: this.state.varsMap
       })
       .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);
@@ -53,6 +127,7 @@ class App extends Component {
   render() {
     const b = Object.entries(steps.Steps).map(x => (
       <Tab
+        key={x[1].ID}
         isActive={this.state.step == x[1].ID}
         onClick={() => this.setState({ step: x[1].ID })}
       >
@@ -81,14 +156,22 @@ class App extends Component {
         </Steps>{" "}*/}
         <div>
           <div>{tabs}</div>
+
           <Steps
             step={this.state.step}
-            form={this.state.form}
-            updateForm={this.updateForm}
+            varsMap={this.state.varsMap}
+            updateVarsMap={this.updateVarsMap}
             updateProgress={this.updateProgress}
+            updateState={this.updateState}
             progress={this.state.progress}
+            modal={this.state.modal}
+            updateModal={this.updateModal}
             send={this.send}
+            empleados={this.state.empleados}
+            tablaIniciada={this.state.tablaIniciada}
+            grid={this.state.grid}
           />
+          <Console evaluate={this.evaluate} active={true} />
         </div>
       </div>
     );
