@@ -25,5 +25,6 @@ export const dict = {
   },
   B: { type: "Button", mode: { L: "Label" } },
   E: { type: "Especial" },
-  Y: { type: "Empty" }
+  Y: { type: "Empty" },
+  M: { type: "Modal" }
 };

@@ -42,12 +42,8 @@ const vacias = Array(1).fill([
   { value: null }
 ]);
 
-// this lets the console read the object "data"
-var data = steps;
-
+// this lets the console read the object "data"s
 var tabla = cabecera.concat(vacias);
-
-const a = Object.entries(steps.Steps).map(x => <li>{x[1].name}</li>);
 
 class App extends Component {
   constructor(props) {
@@ -101,8 +97,8 @@ class App extends Component {
     this.setState({ progress: total });
   }
 
-  updateModal(boolean) {
-    this.setState({ modal: boolean });
+  updateModal() {
+    this.setState({ modal: !this.state.modal });
   }
 
   updateState(field, value) {

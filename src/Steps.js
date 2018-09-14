@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Printer from "./components/Printer";
 import Uploader from "./components/Uploader";
 import DynComp from "./components/DynComp";
+
 import {
   Columns,
   Column,
@@ -174,85 +175,6 @@ class Steps extends Component {
       let propsObj = componente["props"];
     }
     switch (componente.type) {
-      case "Input":
-        return (
-          <Field>
-            <Label>{componente.name}</Label>
-            <Control>
-              <Input
-                key={componente.name}
-                isColor=""
-                value={this.props.varsMap[componente.code]}
-                type={componente.mode}
-                placeholder={componente.code}
-                onChange={event =>
-                  this.props.updateVarsMap(componente.code, event.target.value)
-                }
-                {...propsObj}
-              />
-            </Control>
-          </Field>
-        );
-      case "Title":
-        return (
-          <Title hasTextAlign="centered" isSize={3}>
-            {componente.name}
-          </Title>
-        );
-      case "Uploader":
-        return (
-          <Uploader
-            code={componente.code}
-            mode={componente.mode}
-            color={componente.color}
-          />
-        );
-      case "Button":
-        return (
-          <Field>
-            <div style={{ textAlign: componente.mode == "Label" && "center" }}>
-              {componente.mode == "Label" ? (
-                <Label> {componente.label || componente.extras} </Label>
-              ) : (
-                <Label> hli </Label>
-              )}
-
-              <Button isColor="info" isSize={3} {...propsObj}>
-                {componente.name}
-              </Button>
-            </div>
-          </Field>
-        );
-      case "Datasheet":
-        if (componente.mode == "edit") {
-          return <TableEmpty titles={["Holi", "hola", "empleados"]} rows={5} />;
-        }
-        if ((componente.mode = "view")) {
-          return (
-            <TableEmpty
-              titles={["Holi", "hola", "empleados"]}
-              grid={this.props.varsMap[componente.code]}
-            />
-          );
-        }
-
-      case "Notification":
-        const contenido = componente.name;
-        return (
-          <Notification
-            isColor={componente.color}
-            style={{ whiteSpace: "pre-line" }}
-          >
-            {contenido}
-          </Notification>
-        );
-      case "Empty":
-        return (
-          <Column>
-            {" "}
-            <br />{" "}
-          </Column>
-        );
       case "Especial":
         const propsObj = { min: "2" };
         return (
@@ -295,7 +217,7 @@ class Steps extends Component {
                         );
                       }
                       this.props.updateState("tablaIniciada", true);
-                      this.props.updateModal(true);
+                      this.props.updateModal();
                     }}
                   >
                     {!this.props.tablaIniciada ? "Crear tabla" : "Editar datos"}
@@ -306,26 +228,6 @@ class Steps extends Component {
               )}
             </Columns>
           </div>
-        );
-      case "Select":
-        return (
-          <Field>
-            <Label>{componente.name}</Label>
-            <Control>
-              <Select
-                isColor={componente.color}
-                key={componente.code}
-                value={this.props.varsMap[componente.code]}
-                isFullWidth
-                onChange={event =>
-                  this.props.updateVarsMap(componente.code, event.target.value)
-                }
-              >
-                <option style={{ display: "none" }} />
-                {ops[componente.extras].map(x => <option>{x}</option>)}
-              </Select>
-            </Control>
-          </Field>
         );
       default:
         return null;
@@ -342,11 +244,11 @@ class Steps extends Component {
         {line.H.map(
           y =>
             typeof y == "string" ? (
-              <Column key={y}> {this.renderComp(y)} </Column>
+              <Column key={JSON.stringify(y)}> {this.renderComp(y)} </Column>
             ) : (
               //recursive till ending component nesting
               this.checkCondition(y.C.condition) && (
-                <Column key={y.C.code}>{this.renderLine(y)}</Column>
+                <Column key={JSON.stringify(y.C)}>{this.renderLine(y)}</Column>
               )
             )
         )}
@@ -356,34 +258,45 @@ class Steps extends Component {
 
   renderBox(boxContent, boxTitle = "") {
     return (
-      <Box style={{ padding: "0px" }}>
-        <Printer bold title centered background="#0864cf" color="white">
-          {boxTitle}{" "}
-        </Printer>
-        <Tile
-          key={JSON.stringify(boxContent)}
-          isChild
-          render={props => (
-            <Box {...props}>{boxContent.map(x => this.renderLine(x))}</Box>
-          )}
-        />
-      </Box>
+      <React.Fragment key={boxContent.id}>
+        <Box style={{ padding: "0px" }}>
+          <Printer bold title centered background="#ffdd57" color="#856514">
+            {boxTitle}{" "}
+          </Printer>
+          <Tile
+            key={JSON.stringify(boxContent)}
+            isChild
+            render={props => (
+              <Box {...props}>
+                {boxContent.map(x => (
+                  <React.Fragment key={x.id}>
+                    {this.renderLine(x)}
+                  </React.Fragment>
+                ))}
+              </Box>
+            )}
+          />
+        </Box>
+      </React.Fragment>
     );
   }
 
   render() {
     {
+      {
+      }
+
       /*const d = Object.entries(steps.Steps).map(x => console.log(x[1]));*/
     }
 
     return (
       <div className="Steps">
-        <Modal isActive={this.props.modal}>
+        <Modal isActive={this.props.varsMap.modal}>
           <ModalBackground />
           <ModalCard style={{ width: "94%" }}>
             <ModalCardHeader>
               <ModalCardTitle>Datos empleados</ModalCardTitle>
-              <Delete onClick={() => this.props.updateModal(false)} />
+              <Delete onClick={() => this.props.updateModal()} />
             </ModalCardHeader>
             <ModalCardBody>
               <Button
@@ -534,12 +447,16 @@ class Steps extends Component {
 
               <Tile isAncestor>
                 <Tile isVertical isParent>
-                  {steps.Steps[this.props.step].content.map(
-                    x =>
-                      x.box
+                  {steps.Steps[this.props.step].content.map(x => (
+                    <React.Fragment key={JSON.stringify(x.box)}>
+                      {x.box
                         ? this.renderBox(x.box)
-                        : this.renderBox(x.titledBox.slice(1), x.titledBox[0])
-                  )}
+                        : this.renderBox(
+                            x.titledBox.slice(1),
+                            x.titledBox[0]
+                          )}{" "}
+                    </React.Fragment>
+                  ))}
                 </Tile>
               </Tile>
             </Section>

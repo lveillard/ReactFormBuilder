@@ -58,8 +58,8 @@ export const steps = {
           box: [
             "TC··Centro de trabajo",
             "IT@nombreCentro··Nombre del centro de trabajo",
-            "SXY@becarios··El centro tiene becarios?:becarios",
-            "SXD@CoCo··Convenio colectivo:Y/N"
+            "SXY@becarios··El centro tiene becarios?··becarios",
+            "SXD@CoCo··Convenio colectivo··Y/N"
           ]
         }
       ]
@@ -72,14 +72,14 @@ export const steps = {
         {
           titledBox: [
             "ITA",
-            "NXG:• lorem ipsum balbla\n • holi",
-            "UCY@ITA:Fichero ITA"
+            "NXg·· lorem pistum balbla\n • holi",
+            "UCY@ITA··Fichero ITA"
           ]
         },
         {
           titledBox: [
-            "ITA",
-            "NXI··• lorem ipsum balbla\n • holi",
+            "Otro tipo de ficheros",
+            "NXI··lorem ipsum balbla\n • holi",
             { H: ["UCY@ITA··Fichero ITA", "UCD@ITA··Fichero ITA"] },
             { H: ["UXG@ITA··Fichero ITA", "UXK@ITA··Fichero ITA"] }
           ]
@@ -93,41 +93,83 @@ export const steps = {
       content: [
         {
           box: [
-            "TC:Empleados",
+            "TC··Empleados",
             "EX@datosEmpleados··Datos de empleados",
-            {
-              H: [
-                "IN@numEmpleadosTest··Número de empleados",
-                "BL@crearTabla··Este tiene etiqueta··Etiqueta"
-              ]
-            },
-            {
-              H: [
-                "BL@crearTablaf··Este no tiene etiqueta",
-                "IN@numEmpleados··Número de empleados",
 
+            {
+              H: [
+                "IN@numEmpleados··Número de empleados",
+                {
+                  C: {
+                    condition: "!@numEmpleados",
+                    type: "E"
+                  }
+                },
                 {
                   C: {
                     condition: "@numEmpleados",
                     type: "Button",
                     mode: "Label",
-                    label: "Holi",
                     name: "Crear tabla",
-                    code: "rotito"
+                    label: "debería cambiarse a sí mismo",
+                    code: "modal",
+                    function: "modal"
                   }
-                },
+                }
+              ]
+            },
+            {
+              H: [
+                "BL@crearTablaf··Este no tiene etiqueta",
+                "IN@numEmpleadostest··Número de empleados",
                 {
                   C: {
                     condition: "1",
                     type: "Button",
                     mode: "Label",
                     name: "Crear tabla",
-                    label: "datitos",
+                    label: "Esta tiene f test2",
                     code: "botoncito",
-                    props: { min: "7" }
+                    props: { min: "7" },
+                    function: "test2"
                   }
                 }
               ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      ID: "4",
+      name: "PlayGround",
+      icon: "fa fa-building",
+      content: [
+        {
+          box: [
+            "TC··Centro de trabajo",
+            {
+              C: {
+                condition: "@pruebecita",
+                type: "Modal",
+                mode: "Label",
+                name: "Bienvenido a mi modal",
+                label: "Esta tiene f test2",
+                code: "pruebasModal",
+                props: { min: "7" },
+                function: "test2"
+              }
+            },
+            {
+              C: {
+                condition: "1",
+                type: "Button",
+                mode: "Label",
+                name: "Abrir modal",
+                label: "Esta tiene f test2",
+                code: "pruebecita",
+                props: { min: "7" }
+              }
             }
           ]
         }
@@ -139,4 +181,18 @@ export const steps = {
 export const ops = {
   becarios: ["Centro con becarios", "Centro sin becarios"],
   "Y/N": ["Sí", "No"]
+};
+
+export const funcs = {
+  booleanState: props =>
+    props.updateVarsMap(
+      props.componente.code,
+      !props.varsMap[props.componente.code]
+    ),
+  modal: props => {
+    props.updateVarsMap("initializedTable", true);
+  },
+  pruebasModal: props => {
+    props.updateVarsMap("pruebasModal", !props.varsMap["pruebasModal"]);
+  }
 };
