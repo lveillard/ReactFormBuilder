@@ -5,7 +5,7 @@ import Uploader from "./Uploader";
 import Table from "./Table";
 import TableEmpty from "./TableEmpty";
 import CustomModal from "./CustomModal";
-("");
+import { dict } from "../dictionary/dict";
 
 import {
   Columns,
@@ -43,57 +43,84 @@ import {
 import { ops, funcs } from "../data/data";
 
 class DynComp extends React.Component {
+  prepare(line) {
+    if (typeof line == "string") {
+      var componente = {};
+      let splitted = line.split("··");
+      let generator = splitted[0].split("@")[0];
+      try {
+        componente.type = dict[generator.charAt(0)].type;
+      } catch (error) {
+        console.error("Data.js bad format, line: " + line);
+      }
+      try {
+        componente.mode = dict[generator.charAt(0)].mode[generator.charAt(1)];
+      } catch (error) {
+        componente.mode = "X";
+      }
+      try {
+        componente.color = dict[generator.charAt(0)].color[generator.charAt(2)];
+      } catch (error) {
+        componente.color = "X";
+      }
+      componente.code = splitted[0].split("@")[1];
+      componente.name = splitted[1];
+      componente.extras = splitted[2];
+      componente.origin = "string";
+    }
+    // Preparing complex componente
+    else {
+      var componente = line;
+      var ObjProps = componente.props;
+    }
+    return componente;
+  }
   render() {
+    var componente = this.prepare(this.props.line);
+
     return (
-      <div key={this.props.componente.id} className={"field"}>
+      <div key={componente.id} className={"field"}>
         {/*CONSOLE*/}
 
-        {this.props.componente.type && console.log(this.props.componente)}
+        {componente.type && console.log(componente)}
 
         {/*PRINTER*/}
 
-        {this.props.componente.type == "Printer" && (
-          <Printer> {this.props.componente.name} </Printer>
-        )}
+        {componente.type == "Printer" && <Printer> {componente.name} </Printer>}
 
         {/*TITLE*/}
 
-        {this.props.componente.type == "Title" && (
-          <Title> {this.props.componente.name} </Title>
-        )}
+        {componente.type == "Title" && <Title> {componente.name} </Title>}
 
         {/*DATASHEET*/}
 
-        {this.props.componente.type == "Datasheet" && (
+        {componente.type == "Datasheet" && (
           <TableEmpty titles={["holi", "hola"]}> holi </TableEmpty>
         )}
 
         {/*MODAL*/}
-        {this.props.componente.type == "Modal" && (
+        {componente.type == "Modal" && (
           <CustomModal
             updateVarsMap={this.props.updateVarsMap}
             varsMap={this.props.varsMap}
-            componente={this.props.componente}
+            componente={componente}
           />
         )}
 
         {/*INPUT*/}
 
-        {this.props.componente.type == "Input" && (
+        {componente.type == "Input" && (
           <Field>
-            <Label>{this.props.componente.name}</Label>
+            <Label>{componente.name}</Label>
             <Control>
               <Input
-                key={this.props.componente.name}
+                key={componente.name}
                 isColor=""
-                value={this.props.varsMap[this.props.componente.code]}
-                type={this.props.componente.mode}
-                placeholder={this.props.componente.code}
+                value={this.props.varsMap[componente.code]}
+                type={componente.mode}
+                placeholder={componente.code}
                 onChange={event =>
-                  this.props.updateVarsMap(
-                    this.props.componente.code,
-                    event.target.value
-                  )
+                  this.props.updateVarsMap(componente.code, event.target.value)
                 }
               />
             </Control>
@@ -102,27 +129,22 @@ class DynComp extends React.Component {
 
         {/*SELECT*/}
 
-        {this.props.componente.type == "Select" && (
+        {componente.type == "Select" && (
           <Field>
-            <Label>{this.props.componente.name}</Label>
+            <Label>{componente.name}</Label>
             <Control>
               <Select
-                isColor={this.props.componente.color}
-                key={this.props.componente.code}
-                value={this.props.varsMap[this.props.componente.code]}
+                isColor={componente.color}
+                key={componente.code}
+                value={this.props.varsMap[componente.code]}
                 isFullWidth
                 onChange={event =>
-                  this.props.updateVarsMap(
-                    this.props.componente.code,
-                    event.target.value
-                  )
+                  this.props.updateVarsMap(componente.code, event.target.value)
                 }
               >
                 <option style={{ display: "none" }} />
-                {this.props.componente.extras &&
-                  ops[this.props.componente.extras].map(x => (
-                    <option>{x}</option>
-                  ))}
+                {componente.extras &&
+                  ops[componente.extras].map(x => <option>{x}</option>)}
               </Select>
             </Control>
           </Field>
@@ -130,35 +152,34 @@ class DynComp extends React.Component {
 
         {/*BUTTON*/}
 
-        {this.props.componente.type == "Button" && (
+        {componente.type == "Button" && (
           <Field>
             <div
               style={{
-                textAlign: this.props.componente.mode == "Label" && "center"
+                textAlign: componente.mode == "Label" && "center"
               }}
             >
-              {this.props.componente.mode == "Label" && (
+              {componente.mode == "Label" && (
                 <Label>
                   {//if is type label but no content, then <br/>
-                  this.props.componente.label ||
-                    this.props.componente.extras || <br />}
+                  componente.label || componente.extras || <br />}
                 </Label>
               )}
 
               <Button
-                isColor="info"
+                isColor={componente.color || "info"}
                 isSize={3}
                 onClick={() => {
                   //if it has a function we run it
-                  this.props.componente.function
-                    ? funcs[this.props.componente.function](this.props)
+                  componente.function
+                    ? funcs[componente.function](this.props)
                     : this.props.updateVarsMap(
-                        this.props.componente.code,
-                        !this.props.varsMap[this.props.componente.code]
+                        componente.code,
+                        !this.props.varsMap[componente.code]
                       );
                 }}
               >
-                {this.props.componente.name}
+                {componente.name}
               </Button>
             </div>
           </Field>
@@ -166,28 +187,28 @@ class DynComp extends React.Component {
 
         {/*UPLOADER*/}
 
-        {this.props.componente.type == "Uploader" && (
+        {componente.type == "Uploader" && (
           <Uploader
-            code={this.props.componente.code}
-            mode={this.props.componente.mode}
-            color={this.props.componente.color}
+            code={componente.code}
+            mode={componente.mode}
+            color={componente.color}
           />
         )}
 
         {/*NOTIFICATION*/}
 
-        {this.props.componente.type == "Notification" && (
+        {componente.type == "Notification" && (
           <Notification
-            isColor={this.props.componente.color}
+            isColor={componente.color}
             style={{ whiteSpace: "pre-line" }}
           >
-            {this.props.componente.name}
+            {componente.name}
           </Notification>
         )}
 
         {/*EMPTY*/}
 
-        {this.props.componente.type == "Empty" && (
+        {componente.type == "Empty" && (
           <Column>
             <br />
           </Column>

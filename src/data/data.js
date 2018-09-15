@@ -25,7 +25,7 @@ export const steps = {
                 condition: "1",
                 type: "Input",
                 mode: "Text",
-                name: "holita",
+                name: "holitas",
                 code: "holi"
               }
             },
@@ -102,7 +102,7 @@ export const steps = {
                 {
                   C: {
                     condition: "!@numEmpleados",
-                    type: "E"
+                    type: "Empty"
                   }
                 },
                 {
@@ -122,6 +122,7 @@ export const steps = {
               H: [
                 "BL@crearTablaf··Este no tiene etiqueta",
                 "IN@numEmpleadostest··Número de empleados",
+
                 {
                   C: {
                     condition: "1",
@@ -130,8 +131,7 @@ export const steps = {
                     name: "Crear tabla",
                     label: "Esta tiene f test2",
                     code: "botoncito",
-                    props: { min: "7" },
-                    function: "test2"
+                    props: { min: "7" }
                   }
                 }
               ]
@@ -148,18 +148,8 @@ export const steps = {
         {
           box: [
             "TC··Centro de trabajo",
-            {
-              C: {
-                condition: "@pruebecita",
-                type: "Modal",
-                mode: "Label",
-                name: "Bienvenido a mi modal",
-                label: "Esta tiene f test2",
-                code: "pruebasModal",
-                props: { min: "7" },
-                function: "test2"
-              }
-            },
+            "BLY@modalTest··Abrir modal··modalTest",
+
             {
               C: {
                 condition: "1",
@@ -183,16 +173,31 @@ export const ops = {
   "Y/N": ["Sí", "No"]
 };
 
+export const modals = {
+  Modals: [
+    {
+      button: "modalTest",
+      ID: 0,
+      code: "modalTemp",
+      width: "50%",
+      title: "Centro de trabajo",
+      content: [
+        {
+          noBox: [
+            "IT@nombreCentro··Nombre del centro de trabajo",
+            "SXY@becarios··El centro tiene becarios?··becarios",
+            "SXD@CoCo··Convenio colectivo··Y/N"
+          ]
+        }
+      ]
+    }
+  ]
+};
+
 export const funcs = {
   booleanState: props =>
     props.updateVarsMap(
       props.componente.code,
       !props.varsMap[props.componente.code]
-    ),
-  modal: props => {
-    props.updateVarsMap("initializedTable", true);
-  },
-  pruebasModal: props => {
-    props.updateVarsMap("pruebasModal", !props.varsMap["pruebasModal"]);
-  }
+    )
 };

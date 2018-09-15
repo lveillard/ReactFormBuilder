@@ -23,7 +23,7 @@ export const dict = {
     mode: position,
     color: color
   },
-  B: { type: "Button", mode: { L: "Label" } },
+  B: { type: "Button", mode: { L: "Label" }, color: color },
   E: { type: "Especial" },
   Y: { type: "Empty" },
   M: { type: "Modal" }

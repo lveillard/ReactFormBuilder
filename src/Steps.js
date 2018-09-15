@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Printer from "./components/Printer";
 import Uploader from "./components/Uploader";
 import DynComp from "./components/DynComp";
+import DynLine from "./components/DynLine";
+import DynBox from "./components/DynBox";
 
 import {
   Columns,
@@ -42,21 +44,6 @@ import Table from "./components/Table";
 import TableEmpty from "./components/TableEmpty";
 
 class Steps extends Component {
-  checkCondition(condition) {
-    if (condition != undefined) {
-      //console.log(componente["condition"]);
-      var conditionReady = condition.replace(
-        /(\@)(\w*)/g,
-        "this.props.varsMap.$2"
-      );
-      var conditionResult = eval(conditionReady);
-      //console.log(conditionResult + " que viene de " + conditionReady);
-      return conditionResult;
-    } else {
-      return "holi";
-    }
-  }
-
   removeEmployee(numero = 1) {
     if (this.props.grid.length > numero) {
       let temp = this.props.grid;
@@ -88,92 +75,9 @@ class Steps extends Component {
     return final;
   }
 
-  renderComp(line) {
-    // Preparing simple component
-    if (typeof line == "string") {
-      var componente = {};
-      let splitted = line.split("··");
-      let generator = splitted[0].split("@")[0];
-      try {
-        componente.type = dict[generator.charAt(0)].type;
-      } catch (error) {
-        console.error("Data.js bad format, line: " + line);
-      }
-      try {
-        componente.mode = dict[generator.charAt(0)].mode[generator.charAt(1)];
-      } catch (error) {
-        componente.mode = "X";
-      }
-      try {
-        componente.color = dict[generator.charAt(0)].color[generator.charAt(2)];
-      } catch (error) {
-        componente.color = "X";
-      }
-      componente.code = splitted[0].split("@")[1];
-      componente.name = splitted[1];
-      componente.extras = splitted[2];
-      componente.origin = "string";
-    }
-    // Preparing complex componente
-    else {
-      var componente = line;
-      var ObjProps = componente.props;
-    }
-    return (
-      <DynComp
-        key={JSON.stringify(componente)}
-        componente={componente}
-        varsMap={this.props.varsMap}
-        updateVarsMap={this.props.updateVarsMap}
-        {...ObjProps}
-      >
-        holi
-      </DynComp>
-    );
-  }
-
   renderComponent(componente) {
     // get props for complex
     // If is simple
-    if (typeof componente == "string") {
-      var componentString = componente;
-      var componente = { type: null };
-      componente["type"] = dict[componentString.charAt(0)].type;
-      //console.log(dict[componentString.charAt(0)]);
-      componente["origin"] = "string";
-
-      try {
-        if (!componentString.charAt(1).isOneOf(["-", ":", "X"])) {
-          componente["mode"] =
-            dict[componentString.charAt(0)].mode[componentString.charAt(1)];
-        }
-      } catch (error) {
-        alert(
-          "Error: " + error + " en componente " + JSON.stringify(componente)
-        );
-      }
-      //3rd char not includes - neither :
-      if (!["-", ":"].includes(componentString.charAt(2))) {
-        componente["color"] =
-          dict[componentString.charAt(0)].color[componentString.charAt(2)];
-      }
-      let tempSliced = componentString.slice(0, componentString.indexOf(":"));
-      componente["code"] = tempSliced.slice(tempSliced.indexOf("-") + 1);
-
-      componente["name"] = componentString.slice(
-        componentString.indexOf(":") + 1,
-        componentString.type === "S"
-          ? componentString.lastIndexOf(":")
-          : undefined
-      );
-      componente["extras"] = componentString.slice(
-        componentString.lastIndexOf(":")
-      );
-    } else {
-      //Assign origin for the rest
-      componente["origin"] = Object.keys(componente)[0];
-      let propsObj = componente["props"];
-    }
     switch (componente.type) {
       case "Especial":
         const propsObj = { min: "2" };
@@ -234,64 +138,14 @@ class Steps extends Component {
     }
   }
 
-  renderLine(line) {
-    return typeof line == "string" ? (
-      this.renderComp(line)
-    ) : Object.keys(line)[0] == "C" && this.checkCondition(line.C.condition) ? (
-      this.renderComp(line.C)
-    ) : Object.keys(line)[0] == "H" ? (
-      <Columns>
-        {line.H.map(
-          y =>
-            typeof y == "string" ? (
-              <Column key={JSON.stringify(y)}> {this.renderComp(y)} </Column>
-            ) : (
-              //recursive till ending component nesting
-              this.checkCondition(y.C.condition) && (
-                <Column key={JSON.stringify(y.C)}>{this.renderLine(y)}</Column>
-              )
-            )
-        )}
-      </Columns>
-    ) : null;
-  }
-
-  renderBox(boxContent, boxTitle = "") {
-    return (
-      <React.Fragment key={boxContent.id}>
-        <Box style={{ padding: "0px" }}>
-          <Printer bold title centered background="#ffdd57" color="#856514">
-            {boxTitle}{" "}
-          </Printer>
-          <Tile
-            key={JSON.stringify(boxContent)}
-            isChild
-            render={props => (
-              <Box {...props}>
-                {boxContent.map(x => (
-                  <React.Fragment key={x.id}>
-                    {this.renderLine(x)}
-                  </React.Fragment>
-                ))}
-              </Box>
-            )}
-          />
-        </Box>
-      </React.Fragment>
-    );
-  }
-
   render() {
     {
-      {
-      }
-
       /*const d = Object.entries(steps.Steps).map(x => console.log(x[1]));*/
     }
 
     return (
       <div className="Steps">
-        <Modal isActive={this.props.varsMap.modal}>
+        <Modal isActive={0}>
           <ModalBackground />
           <ModalCard style={{ width: "94%" }}>
             <ModalCardHeader>
@@ -448,13 +302,12 @@ class Steps extends Component {
               <Tile isAncestor>
                 <Tile isVertical isParent>
                   {steps.Steps[this.props.step].content.map(x => (
-                    <React.Fragment key={JSON.stringify(x.box)}>
-                      {x.box
-                        ? this.renderBox(x.box)
-                        : this.renderBox(
-                            x.titledBox.slice(1),
-                            x.titledBox[0]
-                          )}{" "}
+                    <React.Fragment key={JSON.stringify(x)}>
+                      <DynBox
+                        boxContent={x}
+                        varsMap={this.props.varsMap}
+                        updateVarsMap={this.props.updateVarsMap}
+                      />{" "}
                     </React.Fragment>
                   ))}
                 </Tile>
