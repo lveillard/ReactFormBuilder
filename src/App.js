@@ -17,6 +17,7 @@ import { steps, modals } from "./data/data";
 
 import { db, auth, storage } from "./firebase";
 import Console from "./components/Console";
+
 //import Steps, { Step } from "rc-steps";
 const cabecera = [
   [
@@ -135,7 +136,6 @@ class App extends Component {
   render() {
     // modales
     const m = Object.entries(modals.Modals).map(x => (
-      //this.checkCondition(x[1].condition) &&
       <CustomModal
         key={JSON.stringify(x)}
         modalContent={x[1]}

@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import Printer from "./Printer";
-import Uploader from "./Uploader";
 import DynLine from "./DynLine";
-
-import Table from "./Table";
-import TableEmpty from "./TableEmpty";
 
 import { Tile, Box, Title, Section } from "bloomer";
 
@@ -23,13 +19,13 @@ class DynComp extends React.Component {
 
     return (
       <div className={"field"}>
-        <React.Fragment key={boxContent.id}>
+        <React.Fragment>
           {/*box No Box*/}
 
           {this.props.boxContent.noBox ? (
-            <Section>
+            <Section style={{ padding: "0rem 1.5rem 1.5rem 1.5rem" }}>
               {boxContent.map(x => (
-                <React.Fragment key={x.id}>
+                <React.Fragment key={x}>
                   <DynLine
                     line={x}
                     varsMap={this.props.varsMap}
@@ -40,16 +36,22 @@ class DynComp extends React.Component {
             </Section>
           ) : (
             <Box style={{ padding: "0px" }}>
-              <Printer bold title centered background="#ffdd57" color="#856514">
+              <Printer
+                bold
+                title
+                componente={{}}
+                centered
+                background="#ffdd57"
+                color="#856514"
+              >
                 {boxTitle}
               </Printer>
               <Tile
-                key={JSON.stringify(boxContent)}
                 isChild
                 render={props => (
                   <Box {...props}>
                     {boxContent.map(x => (
-                      <React.Fragment key={x.id}>
+                      <React.Fragment key={x}>
                         <DynLine
                           line={x}
                           varsMap={this.props.varsMap}
