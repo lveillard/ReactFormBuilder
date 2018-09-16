@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import Table from "./Table";
-import TableEmpty from "./TableEmpty";
+import Datasheet from "./Datasheet";
 import DynBox from "./DynBox";
 
 import {
@@ -56,7 +56,6 @@ class CustomModal extends React.Component {
           <ModalBackground />
           <ModalCard style={{ width: this.props.modalContent.width }}>
             <ModalCardHeader>
-              {console.log(this.props)}
               <ModalCardTitle>{this.props.modalContent.title}</ModalCardTitle>
               <Delete
                 onClick={() =>

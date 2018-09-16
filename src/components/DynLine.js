@@ -7,12 +7,10 @@ class DynLine extends React.Component {
   checkCondition(condition) {
     if (condition != undefined) {
       //console.log(componente["condition"]);
-      console.warn(condition);
       var conditionReady = condition.replace(
         /(\@)(\w*)/g,
         "this.props.varsMap.$2"
       );
-      console.warn("conditionReady " + conditionReady);
 
       var conditionResult = eval(conditionReady);
       //console.log(conditionResult + " que viene de " + conditionReady);
@@ -40,7 +38,7 @@ class DynLine extends React.Component {
             updateVarsMap={this.props.updateVarsMap}
           />
         ) : Object.keys(line)[0] == "H" ? (
-          <Columns>
+          <Columns isMobile>
             {line.H.map(
               y =>
                 typeof y == "string" ? (

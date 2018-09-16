@@ -38,10 +38,7 @@ import {
   MessageBody
 } from "bloomer";
 import holi, { steps, ops } from "./data/data";
-import { dict } from "./dictionary/dict";
-import { isOneOf } from "./aux/functions";
 import Table from "./components/Table";
-import TableEmpty from "./components/TableEmpty";
 
 class Steps extends Component {
   removeEmployee(numero = 1) {
@@ -69,10 +66,6 @@ class Steps extends Component {
     var final = temp.concat(vacias);
     console.log(final);
     this.props.updateState("grid", final);
-  }
-  prepareMessage(name) {
-    const final = name + "\n holi" + "holi2";
-    return final;
   }
 
   renderComponent(componente) {
@@ -187,28 +180,6 @@ class Steps extends Component {
                 grid={this.props.grid}
               />
               <Columns>
-                <Column>
-                  <Message>
-                    <MessageHeader>
-                      <p>Email personal</p>
-                    </MessageHeader>
-                    <MessageBody>
-                      <ul style={{ listStyleType: "disc" }}>
-                        <li>El empleado recibirá las nóminas en este email</li>{" "}
-                        <li>
-                          En caso de activación del espacio empleado, este será
-                          el email con el que el empleado pueda acceder
-                        </li>{" "}
-                        <li>
-                          {" "}
-                          De utilizar el email profesional, el empleado perdera
-                          el acceso a sus nóminas si finaliza la relación
-                          laboral
-                        </li>
-                      </ul>
-                    </MessageBody>
-                  </Message>
-                </Column>
                 <Column>
                   <Message>
                     <MessageHeader>
