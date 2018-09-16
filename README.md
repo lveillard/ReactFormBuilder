@@ -12,5 +12,5 @@ Using some nice stuff:
 
 - Bulma css + bloomer components
 - FontAwesome
-- ReactDatasheets (https://nadbm.github.io/react-datasheet/)
+- ReactDataSheets (https://nadbm.github.io/react-datasheet/)
 
