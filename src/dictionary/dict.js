@@ -12,8 +12,8 @@ const color = {
 const position = { C: "centered" };
 
 export const dict = {
-  K: { type: "console" },
-  I: { type: "Input", mode: { T: "text", N: "number" } },
+  K: { type: "Console" },
+  I: { type: "Input", mode: { T: "text", N: "number" }, color: color },
   N: { type: "Notification", mode: { U: undefined }, color: color },
   D: { type: "Datasheet", mode: { T: "text" } },
   S: { type: "Select", color: color },
@@ -23,8 +23,9 @@ export const dict = {
     mode: position,
     color: color
   },
-  B: { type: "Button", mode: { L: "Label" }, color: color },
-  E: { type: "Especial" },
-  Y: { type: "Empty" },
-  M: { type: "Modal" }
+  B: { type: "Button", mode: { L: "label" }, color: color },
+  E: { type: "Empty" },
+  M: { type: "Modal" },
+  G: { type: "Message", mode: { B: "bullets", X: "default" } },
+  P: { type: "Printer", mode: { B: "button" } }
 };

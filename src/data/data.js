@@ -19,7 +19,9 @@ export const steps = {
         {
           titledBox: [
             "Identificación de la empresa",
-            "IT@nombreEmpresa··Nombre de la empresa",
+            "ITX@nombreEmpresa··Nombre de la empresa··Winterfell Creations",
+            "E",
+
             {
               C: {
                 condition: "1",
@@ -44,7 +46,7 @@ export const steps = {
             "Centros de trabajo",
             "NXG··Los centros de trabajo estan definidos por: \n• Un código de cuenta de cotización (C.C.C.) \n• Un convenio colectivo",
             "IN@numeroCentros··Número de centros de trabajo",
-            "DE@tabla1··Centros de trabajo"
+            "DE@tabla1··['holi','hola']··7"
           ]
         }
       ]
@@ -98,7 +100,16 @@ export const steps = {
 
             {
               H: [
-                "IN@numEmpleados··Número de empleados",
+                {
+                  C: {
+                    condition: "1",
+                    type: "Input",
+                    props: { min: 0 },
+                    name: "Número de empleados",
+                    code: "numEmpleados",
+                    mode: "number"
+                  }
+                },
                 {
                   C: {
                     condition: "!@numEmpleados",
@@ -109,29 +120,29 @@ export const steps = {
                   C: {
                     condition: "@numEmpleados",
                     type: "Button",
-                    mode: "Label",
+                    mode: "label",
                     name: "Crear tabla",
                     label: "debería cambiarse a sí mismo",
                     code: "modal",
-                    function: "modal"
+                    function: "modal",
+                    icon: "user-plus"
                   }
                 }
               ]
             },
             {
               H: [
-                "BL@crearTablaf··Este no tiene etiqueta",
+                "BL@crearTablaf··Este no tiene etiqueta··mentiras",
                 "IN@numEmpleadostest··Número de empleados",
 
                 {
                   C: {
                     condition: "1",
                     type: "Button",
-                    mode: "Label",
+                    mode: "label",
                     name: "Crear tabla",
                     label: "Esta tiene f test2",
-                    code: "botoncito",
-                    props: { min: "7" }
+                    code: "botoncito"
                   }
                 }
               ]
@@ -154,11 +165,10 @@ export const steps = {
               C: {
                 condition: "1",
                 type: "Button",
-                mode: "Label",
+                mode: "label",
                 name: "Abrir modal",
                 label: "Esta tiene f test2",
-                code: "pruebecita",
-                props: { min: "7" }
+                code: "pruebecita"
               }
             }
           ]
@@ -179,14 +189,96 @@ export const modals = {
       button: "modalTest",
       ID: 0,
       code: "modalTemp",
-      width: "50%",
+      width: "90%",
       title: "Centro de trabajo",
       content: [
         {
           noBox: [
-            "IT@nombreCentro··Nombre del centro de trabajo",
-            "SXY@becarios··El centro tiene becarios?··becarios",
-            "SXD@CoCo··Convenio colectivo··Y/N"
+            {
+              H: [
+                {
+                  C: {
+                    condition: "1",
+                    type: "Button",
+                    mode: "",
+                    color: "warning",
+                    name: "Añadir empleado",
+                    code: "Badd",
+                    icon: "user-plus"
+                  }
+                },
+                {
+                  C: {
+                    condition: "1",
+                    type: "Printer",
+                    mode: "button",
+                    color: "gray",
+                    expression: "@tabla1&&@tabla1[0].length + ' empleados'",
+                    code: "Badd"
+                  }
+                },
+                {
+                  C: {
+                    condition: "1",
+                    type: "Button",
+                    mode: "",
+                    color: "danger",
+                    name: "Eliminar ultimo empleado",
+                    code: "Bremove",
+                    icon: "user-minus"
+                  }
+                }
+              ]
+            },
+
+            {
+              C: {
+                type: "Datasheet",
+                rows: "5",
+                titles: [
+                  "Nombre*",
+                  "Apellidos*",
+                  "Teléfono",
+                  "Email personal*",
+                  "Cuenta bancaria*",
+                  "Saldo de vacaciones*",
+                  "Fin de contrato temporal",
+                  "¿No residente?",
+                  "Fecha de nacimiento"
+                ]
+              }
+            },
+            {
+              H: [
+                {
+                  C: {
+                    type: "Message",
+                    name: "¿Porqué usar el email personal eh?",
+                    title: "Correo electrónico",
+                    color: "",
+                    mode: "bullets",
+                    bullets: [
+                      "El empleado recibirá las nóminas en este email",
+                      "En caso de activación del espacio empleado, este será el email con el que el empleado pueda acceder"
+                    ]
+                  }
+                },
+                {
+                  C: {
+                    type: "Message",
+                    name: "¿Porqué usar el email personal?",
+                    title: "Correo electrónico",
+                    color: "",
+                    mode: "bullets",
+                    bullets: [
+                      "El empleado recibirá las nóminas en este email",
+                      "En caso de activación del espacio empleado, este será el email con el que el empleado pueda acceder",
+                      "De utilizar el email profesional, el empleado perderá el acceso a sus nóminas si finaliza la relación laboral"
+                    ]
+                  }
+                }
+              ]
+            }
           ]
         }
       ]

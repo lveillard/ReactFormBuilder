@@ -135,7 +135,6 @@ class App extends Component {
   render() {
     // modales
     const m = Object.entries(modals.Modals).map(x => (
-      //this.checkCondition(x[1].condition) &&
       <CustomModal
         key={JSON.stringify(x)}
         modalContent={x[1]}
