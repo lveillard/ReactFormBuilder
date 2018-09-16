@@ -8,6 +8,7 @@
   alert("yay");
 };
 var a = checker;*/
+import { tableFunctions } from "../aux/functions";
 
 export const steps = {
   Steps: [
@@ -20,7 +21,6 @@ export const steps = {
           titledBox: [
             "Identificación de la empresa",
             "ITX@nombreEmpresa··Nombre de la empresa··Winterfell Creations",
-            "E",
 
             {
               C: {
@@ -46,7 +46,8 @@ export const steps = {
             "Centros de trabajo",
             "NXG··Los centros de trabajo estan definidos por: \n• Un código de cuenta de cotización (C.C.C.) \n• Un convenio colectivo",
             "IN@numeroCentros··Número de centros de trabajo",
-            "DE@tabla1··['holi','hola']··7"
+            "DE@tabla1··['holi','hola']··7",
+            "DE@tabla2··['holi','hola']··7"
           ]
         }
       ]
@@ -61,7 +62,8 @@ export const steps = {
             "TC··Centro de trabajo",
             "IT@nombreCentro··Nombre del centro de trabajo",
             "SXY@becarios··El centro tiene becarios?··becarios",
-            "SXD@CoCo··Convenio colectivo··Y/N"
+            "SXD@CoCo··Convenio colectivo··Y/N",
+            "DE@tablita··['holi','hola']··7"
           ]
         }
       ]
@@ -204,7 +206,9 @@ export const modals = {
                     color: "warning",
                     name: "Añadir empleado",
                     code: "Badd",
-                    icon: "user-plus"
+                    icon: "user-plus",
+                    function: "addColumn",
+                    target: "employeeTable"
                   }
                 },
                 {
@@ -230,11 +234,11 @@ export const modals = {
                 }
               ]
             },
-
             {
               C: {
                 type: "Datasheet",
                 rows: "5",
+                code: "employeeTable",
                 titles: [
                   "Nombre*",
                   "Apellidos*",
@@ -287,9 +291,15 @@ export const modals = {
 };
 
 export const funcs = {
+  test: function(props) {
+    console.log(props.line.name);
+  },
   booleanState: props =>
     props.updateVarsMap(
       props.componente.code,
       !props.varsMap[props.componente.code]
-    )
+    ),
+  addColumn: function(a, b, c) {
+    tableFunctions.addColumn(a, b, c);
+  }
 };

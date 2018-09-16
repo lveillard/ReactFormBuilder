@@ -11,16 +11,15 @@ class Datasheet extends React.Component {
   getDefault(rows) {
     const rowsNumber = parseInt(rows);
     const titles = this.props.titles.map(x => ({ value: x, readOnly: true }));
-    const emptyRow = this.props.titles.map(x => ({ value: null }));
+    const emptyRow = this.props.titles.map(x => ({
+      value: null,
+      format: "number"
+    }));
     const defaultGrid = Array(rowsNumber || 2).fill(emptyRow);
     defaultGrid.unshift(titles);
+    this.props.updateVarsMap(this.props.componente.code, defaultGrid);
+
     return defaultGrid;
-  }
-  componentWillMount() {
-    this.props.updateVarsMap(
-      this.props.componente.code,
-      this.getDefault(this.props.rows)
-    );
   }
 
   render() {
@@ -37,11 +36,15 @@ class Datasheet extends React.Component {
             cell.readOnly ? e.preventDefault() : null
           }
           onCellsChanged={changes => {
-            const grid = this.props.varsMap[this.props.componente.code].map(
-              row => [...row]
-            );
+            const grid = (
+              this.props.varsMap[this.props.componente.code] ||
+              this.getDefault(this.props.rows)
+            ).map(row => [...row]);
             changes.forEach(({ cell, row, col, value }) => {
-              grid[row][col] = { ...grid[row][col], value };
+              const validated =
+                cell.format === "number" ? parseFloat(value) : "value";
+
+              grid[row][col] = { ...grid[row][col], value: validated };
             });
             this.props.updateVarsMap(this.props.componente.code, grid);
           }}

@@ -79,7 +79,7 @@ class DynComp extends React.Component {
     var componente = this.prepare(this.props.line);
 
     return (
-      <div key={componente.id} className={"field"}>
+      <div className={"field"}>
         {/*CONSOLE*/}
 
         {componente.type === "Console" && console.log(componente)}
@@ -97,7 +97,14 @@ class DynComp extends React.Component {
 
         {componente.type === "Title" && <Title> {componente.name} </Title>}
 
-        {/*DATASHEET*/}
+        {/*DATASHEET
+        1) inciate the table
+        2) render the table*/}
+
+        {/*componente.type === "Datasheet" &&
+          this.props.varsMap[componente.code] ===
+            undefined &&
+          this.props.updateVarsMap(componente.code, [[]])*/}
 
         {componente.type === "Datasheet" && (
           <Datasheet
@@ -129,7 +136,6 @@ class DynComp extends React.Component {
             <Label>{componente.name}</Label>
             <Control>
               <Input
-                key={componente.name}
                 isColor={componente.color}
                 value={this.props.varsMap[componente.code]}
                 type={componente.mode}
@@ -151,7 +157,6 @@ class DynComp extends React.Component {
             <Control>
               <Select
                 isColor={componente.color}
-                key={componente.code}
                 value={this.props.varsMap[componente.code]}
                 isFullWidth
                 onChange={event =>
@@ -188,7 +193,7 @@ class DynComp extends React.Component {
                 onClick={() => {
                   //if it has a function we run it
                   componente.function
-                    ? funcs[componente.function](this.props)
+                    ? funcs[componente.function](this.props, componente)
                     : this.props.updateVarsMap(
                         componente.code,
                         !this.props.varsMap[componente.code]

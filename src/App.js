@@ -17,6 +17,7 @@ import { steps, modals } from "./data/data";
 
 import { db, auth, storage } from "./firebase";
 import Console from "./components/Console";
+
 //import Steps, { Step } from "rc-steps";
 const cabecera = [
   [

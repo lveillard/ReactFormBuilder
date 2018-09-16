@@ -10,8 +10,6 @@ class Printer extends React.Component {
         /(\@)(\w*)/g,
         "this.props.varsMap.$2"
       );
-      console.warn(hola);
-
       result = eval(hola);
     } else {
       result = props.componente.name || props.child;

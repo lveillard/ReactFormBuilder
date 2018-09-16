@@ -19,13 +19,13 @@ class DynComp extends React.Component {
 
     return (
       <div className={"field"}>
-        <React.Fragment key={boxContent.id}>
+        <React.Fragment>
           {/*box No Box*/}
 
           {this.props.boxContent.noBox ? (
             <Section style={{ padding: "0rem 1.5rem 1.5rem 1.5rem" }}>
               {boxContent.map(x => (
-                <React.Fragment key={x.id}>
+                <React.Fragment key={x}>
                   <DynLine
                     line={x}
                     varsMap={this.props.varsMap}
@@ -37,7 +37,6 @@ class DynComp extends React.Component {
           ) : (
             <Box style={{ padding: "0px" }}>
               <Printer
-                key={JSON.stringify(boxContent)}
                 bold
                 title
                 componente={{}}
@@ -48,12 +47,11 @@ class DynComp extends React.Component {
                 {boxTitle}
               </Printer>
               <Tile
-                key={JSON.stringify(boxContent)}
                 isChild
                 render={props => (
                   <Box {...props}>
                     {boxContent.map(x => (
-                      <React.Fragment key={x.id}>
+                      <React.Fragment key={x}>
                         <DynLine
                           line={x}
                           varsMap={this.props.varsMap}
