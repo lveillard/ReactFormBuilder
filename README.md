@@ -14,3 +14,5 @@ Using some nice stuff:
 - FontAwesome
 - ReactDataSheets (https://nadbm.github.io/react-datasheet/)
 
+- This example is also connected to one firebase firestore and uses it's auth method
+
