@@ -10,9 +10,7 @@ Please note that this is just a training project
 ## Dependencies
 Using some nice stuff:
 
-Bulma css + bloomer components
-
-FontAwesome
-
-ReactDatasheets (https://nadbm.github.io/react-datasheet/)
+- Bulma css + bloomer components
+- FontAwesome
+- ReactDatasheets (https://nadbm.github.io/react-datasheet/)
 
