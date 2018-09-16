@@ -6,3 +6,11 @@ If you change the content of the data.data.js file, you will change the componen
 
 Please note that this is just a training project
 
+
+## Dependencies
+Using some nice stuff:
+
+Bulma css + bloomer components
+FontAwesome
+ReactDatasheets (https://nadbm.github.io/react-datasheet/)
+
