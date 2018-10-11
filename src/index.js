@@ -14,9 +14,7 @@ import { Container, Section } from "bloomer";
 import "./style.css";
 
 import { BrowserRouter } from "react-router-dom";
-document.body.style.backgroundColor = "#f6f7f9";
 document.body.style.height = "100vh";
-
 ReactDOM.render(
   <Section className="main">
     <Container>

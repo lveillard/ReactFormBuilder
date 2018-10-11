@@ -12,7 +12,7 @@ class Printer extends React.Component {
       );
       result = eval(hola);
     } else {
-      result = props.componente.name || props.child;
+      result = props.componente.name || props.children;
     }
 
     return result;
